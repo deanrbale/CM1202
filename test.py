@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from question import Question
 
 class Test:
@@ -42,5 +44,5 @@ class Test:
 		return
 
 	def exitTest(self):
-		
+
 		return

@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from test import Test
 
 class Module:
@@ -9,9 +11,11 @@ class Module:
 		self.__moduleName = name
 		self.__moduleTest = Test(self.__moduleCode)
 
-	def getTestInformation(self):
+	def getModuleCode(self):
+		return self.__moduleCode
 
-		return
+	def getModuleName(self):
+		return self.__moduleName
 
 
 
