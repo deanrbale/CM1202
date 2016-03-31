@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from tkinter import * 
+from module import Module
 
 class Menu(Frame):
 
@@ -15,6 +16,8 @@ class Menu(Frame):
 		self.createModuleSelect(master)
 		self.createLessonButton(master)
 		self.createTestButton(master)
+		self.createExitButton(master)
+		self.__modules =  [Module('001', 'Test name', False)]
 
 	def createWelcomeMessages(self, master):
 		lblTitle = Label(master, text="Welcome to Group 4's Application", bg="white" , font=('MS', 20, 'bold'))
@@ -39,29 +42,44 @@ class Menu(Frame):
 
 		self.listModule.selection_set(END)
 
+	def initiateLesson(self, event):
+
+
+
+		return
+
+
+	def initiateTest(self, event):
+
+
+
+		return
+
+	def exitApp(self, event):
+		
+			#sys.exit(0)
+		return
+
+
 	def createLessonButton(self, master):
 
 		butLesson = Button(master, text='Start Lesson',font=('MS', 12,'bold')) 
-		butLesson['command']=self.initiateLesson      #Note: no () after the method 
 		butLesson.place(x = 400, y = 400, width= 150, height=50)
+		butLesson.bind('<Button-1>', self.initiateLesson(self))
 
 	def createTestButton(self, master):
 
-		butLesson = Button(master, text='Start test',font=('MS', 12,'bold')) 
-		butLesson['command']=self.initiateTest     #Note: no () after the method 
-		butLesson.place(x = 650, y = 400, width= 150, height=50)
+		butTest = Button(master, text='Start test',font=('MS', 12,'bold')) 
+		butTest.place(x = 650, y = 400, width= 150, height=50)
+		butTest.bind('<Button-1>', self.initiateTest(self))
+
+	def createExitButton(self, master):
+
+		butTest = Button(master, text='Exit',font=('MS', 12,'bold')) 
+		butTest.place(x = 525, y = 500, width= 150, height=50)
+		butTest.bind('<Button-1>', self.exitApp(self))
 
 
-	def initiateLesson(self):
-
-		return
-
-
-	def initiateTest(self):
-
-
-
-		return
 
 
 def main():
