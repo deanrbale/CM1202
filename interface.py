@@ -1,73 +1,83 @@
 #!/usr/bin/python3
 
-from tkinter import * 
-
-class Menu(Frame):
-
-	def __init__(self, master):
-
-		Frame.__init__(self, master)
-		#master.minsize(width= 1500, height= 750)
-		#master.maxsize(width= 1500, height= 750)
-		master.geometry("1200x750+30+30")
-		master.configure(background='white')
-		self.createWelcomeMessages(master)
-		self.createModuleSelect(master)
-		self.createLessonButton(master)
-		self.createTestButton(master)
-
-	def createWelcomeMessages(self, master):
-		lblTitle = Label(master, text="Welcome to Group 4's Application", font=('MS', 20, 'bold'))
-		lblTitle.place(x = 375, y = 50, width= 450, height=25)
-
-		lblMessage = Label(master, text="Please select a module and then choose \nto complete the lesson or test.", font=('MS', 12, 'bold'))
-		lblMessage.place(x = 375, y = 80, width= 450, height=50)
+import tkinter as tk
+from tkinter import ttk
 
 
-	def createModuleSelect(self, master): 
-		lblModule = Label(master, text='Module:', font=('MS', 10,'bold'))     
-		lblModule.place(x = 475, y = 200, width= 50, height=10)
-		
-		self.listModule = Listbox(master, height= 3) 
-		scroll = Scrollbar(master, command= self.listModule.yview)                     
-		self.listModule.configure(yscrollcommand=scroll.set)  
+LARGE_FONT= ("Verdana", 12)
 
-		self.listModule.place(x = 550, y = 195, width= 150, height=50) 
-		scroll.place(x = 690, y = 195, width= 25, height=50)                                      
-		for item in ["001", "002", ""]:                   
-			self.listModule.insert(END, item)  
+class CourseworkApp(tk.Tk):
 
-		self.listModule.selection_set(END)
+	def __init__(self, *args, **kwargs):
 
-	def createLessonButton(self, master):
+		tk.Tk.__init__(self, *args, **kwargs)
 
-		butLesson = Button(master, text='Start Lesson',font=('MS', 12,'bold')) 
-		butLesson['command']=self.initiateLesson      #Note: no () after the method 
-		butLesson.place(x = 400, y = 400, width= 150, height=50)
+		tk.Tk.wm_title(self, "Group 4 DQS Coursework")
 
-	def createTestButton(self, master):
+		container = tk.Frame(self)
+		container.pack(side="top", fill="both", expand=True)
+		container.grid_rowconfigure(0, weight=1)
+		container.grid_columnconfigure(0, weight=1)
 
-		butLesson = Button(master, text='Start test',font=('MS', 12,'bold')) 
-		butLesson['command']=self.initiateTest     #Note: no () after the method 
-		butLesson.place(x = 650, y = 400, width= 150, height=50)
+		self.frames = {}
 
+		for F in (StudentMenuPage, TestInstructionPage, ExtraPage ):
 
-	def initiateLesson(self):
+			frame = F(container, self)
+			self.frames[F] = frame
+			frame.grid(row=0, column=0, sticky="nsew")
 
-		return
+		self.show_frame(StudentMenuPage)
+
+	def show_frame (self, cont):
+
+		frame = self.frames[cont]
+		frame.tkraise()
 
 
-	def initiateTest(self):
+class StudentMenuPage(tk.Frame):
 
-		return
+	def __init__(self, parent, controller):
+		tk.Frame.__init__(self, parent)
+		label = ttk.Label(self, text="Welcome to the Menu Page", font=LARGE_FONT)
+		label.pack(pady=10, padx=10)
+
+		butTest = ttk.Button(self, text="Test",  command=lambda: controller.show_frame(TestInstructionPage))
+		butTest.pack()
+
+		butLesson = ttk.Button(self, text="Extra",  command=lambda: controller.show_frame(ExtraPage))
+		butLesson.pack()
+
+class  TestInstructionPage(tk.Frame):
+
+	def __init__(self, parent, controller):
+		tk.Frame.__init__(self, parent)
+		label = ttk.Label(self, text="Test Instructions", font=LARGE_FONT)
+		label.pack(pady=10, padx=10)
+
+		butMenu = ttk.Button(self, text="Menu",  command=lambda: controller.show_frame(StudentMenuPage))
+		butMenu.pack()
+
+class  ExtraPage(tk.Frame):
+
+	def __init__(self, parent, controller):
+		tk.Frame.__init__(self, parent)
+		label = ttk.Label(self, text="Extra Page", font=LARGE_FONT)
+		label.pack(pady=10, padx=10)
+
+		butMenu = ttk.Button(self, text="Menu",  command=lambda: controller.show_frame(StudentMenuPage))
+		butMenu.pack()
+
 
 
 def main():
-	root = Tk() 
-	root.title("Coursework") 
-	app = Menu(root) 
-	root.mainloop() 
-	return
+	app = CourseworkApp()
+	app.mainloop()
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
