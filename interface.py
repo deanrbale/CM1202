@@ -17,15 +17,15 @@ class Menu(Frame):
 		self.createTestButton(master)
 
 	def createWelcomeMessages(self, master):
-		lblTitle = Label(master, text="Welcome to Group 4's Application", font=('MS', 20, 'bold'))
+		lblTitle = Label(master, text="Welcome to Group 4's Application", bg="white" , font=('MS', 20, 'bold'))
 		lblTitle.place(x = 375, y = 50, width= 450, height=25)
 
-		lblMessage = Label(master, text="Please select a module and then choose \nto complete the lesson or test.", font=('MS', 12, 'bold'))
+		lblMessage = Label(master, text="Please select a module and then choose \nto complete the lesson or test.",bg="white" , font=('MS', 12, 'bold'))
 		lblMessage.place(x = 375, y = 80, width= 450, height=50)
 
 
 	def createModuleSelect(self, master): 
-		lblModule = Label(master, text='Module:', font=('MS', 10,'bold'))     
+		lblModule = Label(master, text='Module:',bg="white" ,  font=('MS', 10,'bold'))     
 		lblModule.place(x = 475, y = 200, width= 50, height=10)
 		
 		self.listModule = Listbox(master, height= 3) 
@@ -58,6 +58,8 @@ class Menu(Frame):
 
 
 	def initiateTest(self):
+
+
 
 		return
 
