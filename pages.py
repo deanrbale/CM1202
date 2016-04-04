@@ -52,19 +52,19 @@ class MenuPage(tk.Frame):
 
 		self.listModule.grid(row=1, column=2, columnspan=1, rowspan=2, padx=(0,0), pady=(0,0), sticky="nw") 
 		self.scroll.grid(row=1, column=3, columnspan=1,  rowspan=2, padx=(0,0), pady=(0,0), sticky="ne")  
+		self.listModule.activate(0)
 
-
-		self.butLesson = tk.Button(self, text="Lesson", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9", command=lambda: controller.show_frame(LessonStartPage))
+		self.butLesson = tk.Button(self, text="Lesson", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
 		self.butLesson.bind("<Enter>", lambda event, x=self.butLesson: x.configure(bg="#80dfff"))
 		self.butLesson.bind("<Leave>", lambda event, x=self.butLesson: x.configure(bg="#d9d9d9"))
 		self.butLesson.grid(row=2, column=1, columnspan=1, rowspan=1, padx=(0,0), pady=(100,0), sticky="w")   
 
-		self.butTest = tk.Button(self, text="Test", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9",  command=lambda: controller.show_frame(TestInstructionPage))
+		self.butTest = tk.Button(self, text="Test", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
 		self.butTest.bind("<Enter>", lambda event, x=self.butTest: x.configure(bg="#80dfff"))
 		self.butTest.bind("<Leave>", lambda event, x=self.butTest: x.configure(bg="#d9d9d9"))
 		self.butTest.grid(row=2, column=2, columnspan=1, rowspan=1, padx=(0,0), pady=(100,0), sticky="e")
 
-class  TestInstructionPage(tk.Frame):
+class  TestPage(tk.Frame):
 
 	def __init__(self, parent, controller, mCode):
 		tk.Frame.__init__(self, parent)
@@ -84,10 +84,21 @@ class  TestInstructionPage(tk.Frame):
 		self.lblMessage.grid(row=1, column=0, columnspan=1, rowspan=1, padx=(column_0_xpad,50), pady=(0,50), sticky="w")
 
 
-		self.butMenu = tk.Button(self, text="Back to Menu", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9",  command=lambda: controller.show_frame(MenuPage))
+		self.butMenu = tk.Button(self, text="Back to Menu", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
 		self.butMenu.bind("<Enter>", lambda event, x=self.butMenu: x.configure(bg="#80dfff"))
 		self.butMenu.bind("<Leave>", lambda event, x=self.butMenu: x.configure(bg="#d9d9d9"))
 		self.butMenu.grid(row=2, column=2, columnspan=1, rowspan=1, padx=(0,0), pady=(100,0), sticky="e")
+
+		self.butStart = tk.Button(self, text="Start Test", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
+		self.butStart.bind("<Enter>", lambda event, x=self.butMenu: x.configure(bg="#80dfff"))
+		self.butStart.bind("<Leave>", lambda event, x=self.butMenu: x.configure(bg="#d9d9d9"))
+		self.butStart.grid(row=2, column=3, columnspan=1, rowspan=1, padx=(150,0), pady=(100,0), sticky="w")
+
+class QuestionPage(tk.Frame):
+
+	def __init__(self, parent, controller, mCode):
+		tk.Frame.__init__(self, parent)
+
 
 
 class  LessonStartPage(tk.Frame):
@@ -97,5 +108,5 @@ class  LessonStartPage(tk.Frame):
 		self.lblTitle = ttk.Label(self, text="Lesson", font=LARGE_FONT)
 		self.lblTitle.grid(row=0, column=0, columnspan=2, sticky="N")
 
-		self.butMenu = ttk.Button(self, text="Menu",  command=lambda: controller.show_frame(MenuPage))
+		self.butMenu = tk.Button(self, text="Menu")
 		self.butMenu.grid(row=10, column=10, columnspan=2, sticky="N")

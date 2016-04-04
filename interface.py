@@ -21,19 +21,23 @@ class CourseworkApp(tk.Tk):
 
 		self.frames = {}
 
-		for F in (MenuPage, LessonStartPage ):
+		for F in (HomePage, LessonModule001 ):
 
 			frame = F(container, self)
 			self.frames[F] = frame
 			frame.grid(row=0, column=0, sticky="nsew")
 
-		frame = TestInstructionPage(container, self, "001")
-		self.frames[TestInstructionPage] = frame
+		frame = TestModule001(container, self, "001")
+		self.frames[TestModule001] = frame
+		frame.grid(row=0, column=0, sticky='nsew')
+
+		frame = TestModule002(container, self, "002")
+		self.frames[TestModule002] = frame
 		frame.grid(row=0, column=0, sticky='nsew')
 
 
 
-		self.show_frame(MenuPage)
+		self.show_frame(HomePage)
 
 
 	def createMenuBar(self, container):
@@ -62,7 +66,41 @@ class CourseworkApp(tk.Tk):
 
 		#^^^ above creates two test pages
 
+class HomePage (MenuPage):
 
+	def __init__(self, parent, controller):
+		MenuPage.__init__(self, parent, controller)
+		self.butTest.configure(command=lambda: self.showSelectedModuleTest(controller))
+		self.butLesson.configure(command=lambda: controller.show_frame(LessonModule001))
+
+	def showSelectedModuleTest(self, controller):
+
+		selection = self.listModule.curselection()
+		if (len(selection) == 1):
+			if (selection[0] == 0):
+				controller.show_frame(TestModule001)
+			elif (selection[0] == 1):
+				controller.show_frame(TestModule002) 
+
+
+class LessonModule001 (LessonStartPage):
+
+	def __init__(self, parent, controller):
+		LessonStartPage.__init__(self, parent, controller)
+		self.butMenu.configure(command=lambda: controller.show_frame(HomePage))
+
+
+class TestModule001 (TestPage):
+
+	def __init__(self, parent, controller, mCode):
+		TestPage.__init__(self, parent, controller, mCode)
+		self.butMenu.configure(command=lambda: controller.show_frame(HomePage))
+
+class TestModule002 (TestPage):
+
+	def __init__(self, parent, controller, mCode):
+		TestPage.__init__(self, parent, controller, mCode)
+		self.butMenu.configure(command=lambda: controller.show_frame(HomePage))
 
 def main():
 	app = CourseworkApp()
