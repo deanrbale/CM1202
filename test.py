@@ -13,6 +13,12 @@ class Test:
 	def getQuestionDetails(self, questionNumber):
 		return self.__questions[questionNumber - 1]
 
+	def incCurrentQuestion(self):
+		self.__currentQuestion += 1
+
+	def incCurrentMark(self):
+		self.__currentMark += 1
+
 	def checkProvidedAnswer(self, questionNumber, ProvidedAnswer):
 
 		return 

@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from module import *
 
 EXTRA_LARGE_FONT = ("MS", 22, "bold")
 LARGE_BUTTON_FONT = ("MS", 14, "bold")
@@ -49,6 +50,7 @@ class MenuPage(tk.Frame):
 			self.listModule.insert(tk.END, item)  
 
 		self.listModule.selection_set(0, tk.END)
+		self.listModule.focus_set()
 
 		self.listModule.grid(row=1, column=2, columnspan=1, rowspan=2, padx=(0,0), pady=(0,0), sticky="nw") 
 		self.scroll.grid(row=1, column=3, columnspan=1,  rowspan=2, padx=(0,0), pady=(0,0), sticky="ne")  
@@ -66,22 +68,32 @@ class MenuPage(tk.Frame):
 
 class  TestPage(tk.Frame):
 
-	def __init__(self, parent, controller, mCode):
+	def __init__(self, parent, controller, mCode, mName, lCompleted):
 		tk.Frame.__init__(self, parent)
+		self.__associatedModule = Module(mCode, mName, lCompleted)
 
 		self.__moduleCode = mCode
 
-		column_0_xpad = 150
-		row_0_ypad = 75
+		self.__column0xpad = 150
+		self.__row0ypad = 75
+
+		self.setIntructionPage()
+
+		self.questionTemplate()
+		self.hideQuestionTemplate()
+
+
+
+	def setIntructionPage(self):
 
 		self.labelVariable = tk.StringVar()
-		self.labelVariable.set("You have selected to do the test for " + mCode + " you only have one attempt. Please read the instructions thoroughly before you start the test.")
+		self.labelVariable.set("You have selected to do the test for " + self.__moduleCode + " you only have one attempt. Please read the instructions thoroughly before you start the test.")
 
 		self.lblTitle = tk.Label(self, text="Test Instructions", justify='center', font=EXTRA_LARGE_FONT, wraplength=300)
-		self.lblTitle.grid( row=0, column=0,  columnspan=1,  rowspan=1, padx=(column_0_xpad,50), pady=(row_0_ypad,75), sticky="n")
+		self.lblTitle.grid( row=0, column=0,  columnspan=1,  rowspan=1, padx=(self.__column0xpad,50), pady=(self.__row0ypad,75), sticky="n")
 
 		self.lblMessage = tk.Label(self, textvariable=self.labelVariable, justify='left', font=NORMAL_FONT, wraplength=400)
-		self.lblMessage.grid(row=1, column=0, columnspan=1, rowspan=1, padx=(column_0_xpad,50), pady=(0,50), sticky="w")
+		self.lblMessage.grid(row=1, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad,50), pady=(0,50), sticky="w")
 
 
 		self.butMenu = tk.Button(self, text="Back to Menu", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
@@ -90,14 +102,90 @@ class  TestPage(tk.Frame):
 		self.butMenu.grid(row=2, column=2, columnspan=1, rowspan=1, padx=(0,0), pady=(100,0), sticky="e")
 
 		self.butStart = tk.Button(self, text="Start Test", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
-		self.butStart.bind("<Enter>", lambda event, x=self.butMenu: x.configure(bg="#80dfff"))
-		self.butStart.bind("<Leave>", lambda event, x=self.butMenu: x.configure(bg="#d9d9d9"))
+		self.butStart.bind("<Enter>", lambda event, x=self.butStart: x.configure(bg="#80dfff"))
+		self.butStart.bind("<Leave>", lambda event, x=self.butStart: x.configure(bg="#d9d9d9"))
 		self.butStart.grid(row=2, column=3, columnspan=1, rowspan=1, padx=(150,0), pady=(100,0), sticky="w")
+
+	def questionTemplate(self):
+
+		self.lblQuestionNumber = tk.Label(self, text='', justify='left', font=EXTRA_LARGE_FONT, wraplength=300 )
+		self.lblQuestionNumber.grid(row=0, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad, 50), pady=(self.__row0ypad,75), sticky='nw')
+
+		self.lblQuestion = tk.Label(self, text='', justify='left', font=NORMAL_FONT, wraplength=600)
+		self.lblQuestion.grid(row=1, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad, 50), pady=(0,75), sticky='nw')
+
+		self.butNext = tk.Button(self, text="Next", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
+		self.butNext.bind("<Enter>", lambda event, x=self.butNext: x.configure(bg="#80dfff"))
+		self.butNext.bind("<Leave>", lambda event, x=self.butNext: x.configure(bg="#d9d9d9"))
+		self.butNext.grid(row=1, column=0, columnspan=2, rowspan=1, padx=(150,0), pady=(100,0), sticky="s")
+
+	def displayQuestionDetails(self, question):
+
+		self.lblQuestionNumber.configure(text='Question ' + str(question.getQuestionNumber()))
+		self.lblQuestion.configure(text=str(question.getQuestionInfo()))
+
+
+
+	def startTest (self):
+		self.hideInstructions()
+
+		startingQuestion = self.__associatedModule.getModuleTest().getQuestionDetails(1)
+
+		self.displayQuestionDetails(startingQuestion)
+		
+		self.showQuestionTemplate()
+
+	def showInstructions(self):
+
+		self.lblTitle.grid()
+		self.lblMessage.grid()
+		self.butMenu.grid()
+		self.butStart.grid()
+
+	def showQuestionTemplate(self):
+
+		self.lblQuestionNumber.grid()
+		self.lblQuestion.grid()
+		self.butNext.grid()
+
+
+	def hideInstructions(self):
+
+		self.lblTitle.grid_remove()
+		self.lblMessage.grid_remove()
+		self.butMenu.grid_remove()
+		self.butStart.grid_remove()
+
+	def hideQuestionTemplate(self):
+
+		self.lblQuestionNumber.grid_remove()
+		self.lblQuestion.grid_remove()
+		self.butNext.grid_remove()
+
+
+
+
 
 class QuestionPage(tk.Frame):
 
 	def __init__(self, parent, controller, mCode):
 		tk.Frame.__init__(self, parent)
+
+		column_0_xpad = 150
+		row_0_ypad = 75
+
+		self.lblTitle = tk.Label(self, text='', justify='left', font=LARGE_FONT, wraplength=300 )
+		self.lblTitle.grid(row=0, column=0, columnspan=1, rowspan=1, padx=(column_0_xpad, 50), pady=(row_0_ypad,75), sticky='n')
+
+		self.lblQuestion = tk.Label(self, text='', justify='left', font=NORMAL_FONT, wraplength=400)
+		self.lblQuestion.grid(row=0, column=0, columnspan=1, rowspan=1, padx=(column_0_xpad, 50), pady=(row_0_ypad,75), sticky='n')
+
+		self.butNext = tk.Button(self, text="Next", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
+		self.butNext.bind("<Enter>", lambda event, x=self.butNext: x.configure(bg="#80dfff"))
+		self.butNext.bind("<Leave>", lambda event, x=self.butNext: x.configure(bg="#d9d9d9"))
+		self.butNext.grid(row=1, column=1, columnspan=1, rowspan=1, padx=(150,0), pady=(100,0), sticky="sw")
+
+
 
 
 

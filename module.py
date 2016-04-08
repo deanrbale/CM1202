@@ -22,5 +22,8 @@ class Module:
 	def getModuleName(self):
 		return self.__moduleName
 
+	def getModuleTest(self):
+		return self.__moduleTest
+
 
 

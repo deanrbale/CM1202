@@ -27,11 +27,11 @@ class CourseworkApp(tk.Tk):
 			self.frames[F] = frame
 			frame.grid(row=0, column=0, sticky="nsew")
 
-		frame = TestModule001(container, self, "001")
+		frame = TestModule001(container, self, "001", 'Counting')
 		self.frames[TestModule001] = frame
 		frame.grid(row=0, column=0, sticky='nsew')
 
-		frame = TestModule002(container, self, "002")
+		frame = TestModule002(container, self, "002", 'Probability')
 		self.frames[TestModule002] = frame
 		frame.grid(row=0, column=0, sticky='nsew')
 
@@ -64,7 +64,6 @@ class CourseworkApp(tk.Tk):
 		frame = self.frames[cont]
 		frame.tkraise()
 
-		#^^^ above creates two test pages
 
 class HomePage (MenuPage):
 
@@ -92,14 +91,21 @@ class LessonModule001 (LessonStartPage):
 
 class TestModule001 (TestPage):
 
-	def __init__(self, parent, controller, mCode):
-		TestPage.__init__(self, parent, controller, mCode)
+	def __init__(self, parent, controller, mCode, mName, lCompleted=False):
+		TestPage.__init__(self, parent, controller, mCode, mName, lCompleted)
+		self.setCommands(controller)
+
+	def setCommands(self, controller):
+
 		self.butMenu.configure(command=lambda: controller.show_frame(HomePage))
+		self.butStart.configure(command=lambda: self.startTest())
+
+	
 
 class TestModule002 (TestPage):
 
-	def __init__(self, parent, controller, mCode):
-		TestPage.__init__(self, parent, controller, mCode)
+	def __init__(self, parent, controller, mCode, mName, lCompleted=False):
+		TestPage.__init__(self, parent, controller, mCode, mName, lCompleted)
 		self.butMenu.configure(command=lambda: controller.show_frame(HomePage))
 
 def main():
