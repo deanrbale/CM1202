@@ -8,7 +8,7 @@ class Question:
 	def __init__(self, moduleCode, questionNumber):
 		self.__questionNumber = questionNumber
 		with open('test_'+ moduleCode +'.csv') as csvfile:
-			rdr = csv.reader(csvfile)
+			rdr = csv.reader(csvfile, delimiter=',')
 			for row in rdr:
 				if int(row[0]) == questionNumber:
 					self.__questionInformation = row[1]

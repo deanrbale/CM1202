@@ -21,7 +21,7 @@ class CourseworkApp(tk.Tk):
 
 		self.frames = {}
 
-		for F in (HomePage, LessonModule001 ):
+		for F in (LoginPage, HomePage, LessonModule001 ):
 
 			frame = F(container, self)
 			self.frames[F] = frame
@@ -37,13 +37,13 @@ class CourseworkApp(tk.Tk):
 
 
 
-		self.show_frame(HomePage)
+		self.show_frame(LoginPage)
 
 
 	def createMenuBar(self, container):
 		menubar = tk.Menu(container)
 		basicMenu = tk.Menu(menubar, tearoff=0)
-		basicMenu.add_command(label="Home", command=lambda: self.show_frame(MenuPage))
+		basicMenu.add_command(label="Home", command=lambda: self.show_frame(HomePage))
 		basicMenu.add_separator()
 		basicMenu.add_command(label="Account settings", command=lambda: popupMessage("Not supported yet"))
 		basicMenu.add_command(label="Test scores", command=lambda: popupMessage("Not supported yet"))
@@ -65,10 +65,10 @@ class CourseworkApp(tk.Tk):
 		frame.tkraise()
 
 
-class HomePage (MenuPage):
+class HomePage (MenuFrame):
 
 	def __init__(self, parent, controller):
-		MenuPage.__init__(self, parent, controller)
+		MenuFrame.__init__(self, parent, controller)
 		self.butTest.configure(command=lambda: self.showSelectedModuleTest(controller))
 		self.butLesson.configure(command=lambda: controller.show_frame(LessonModule001))
 
@@ -82,17 +82,17 @@ class HomePage (MenuPage):
 				controller.show_frame(TestModule002) 
 
 
-class LessonModule001 (LessonStartPage):
+class LessonModule001 (LessonFrame):
 
 	def __init__(self, parent, controller):
-		LessonStartPage.__init__(self, parent, controller)
+		LessonFrame.__init__(self, parent, controller)
 		self.butMenu.configure(command=lambda: controller.show_frame(HomePage))
 
 
-class TestModule001 (TestPage):
+class TestModule001 (TestFrame):
 
 	def __init__(self, parent, controller, mCode, mName, lCompleted=False):
-		TestPage.__init__(self, parent, controller, mCode, mName, lCompleted)
+		TestFrame.__init__(self, parent, controller, mCode, mName, lCompleted)
 		self.setCommands(controller)
 
 	def setCommands(self, controller):
@@ -102,15 +102,36 @@ class TestModule001 (TestPage):
 
 	
 
-class TestModule002 (TestPage):
+class TestModule002 (TestFrame):
 
 	def __init__(self, parent, controller, mCode, mName, lCompleted=False):
-		TestPage.__init__(self, parent, controller, mCode, mName, lCompleted)
+		TestFrame.__init__(self, parent, controller, mCode, mName, lCompleted)
 		self.butMenu.configure(command=lambda: controller.show_frame(HomePage))
 
+		self.setCommands(controller)
+
+	def setCommands(self, controller):
+
+		self.butMenu.configure(command=lambda: controller.show_frame(HomePage))
+		self.butStart.configure(command=lambda: self.startTest())
+
+
+class LoginPage (LoginFrame):
+
+	def __init__(self, parent, controller):
+		LoginFrame.__init__(self, parent, controller)
+		self.butLogin.configure(command=lambda: self.succesfullLogin(controller))
+
+	def succesfullLogin(self, controller):
+		controller.geometry("1100x618+150+50")
+		controller.show_frame(HomePage)
+
+
+
 def main():
+
 	app = CourseworkApp()
-	app.geometry("1280x720+150+50")
+	app.geometry("500x500+500+100")
 	app.mainloop()
 
 if __name__ == "__main__":
