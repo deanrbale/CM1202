@@ -1,0 +1,64 @@
+Definitions:
+A .Bpermutation of a set of objects is an order of the objects in sequence
+An .Br-permutation of a set of n elements is an ordered selection of r elements taken from the set without
+repetition
+An .Br-combination of a set of size n is a subset of size r 
+-
+The Product Rule
+If an operation consists of k steps where:
+- 1 .SPst step can be enacted in n ways
+- 2 .SPnd step can be enacted in n .SB2 ways (regardless of how the 1 .SPst step was enacted)
+- ...
+- .In .SPth step can be enacted in nk ways (regardless of how preceding steps were enacted)
+This means that the entirety of the operation can be enacted in;
+.In .SB1 x .In .SB2 x ... x .In k ways
+-
+Permutations
+An example of a permutation:
+S = {a, b, c} this set can then be reordered as;
+abc acb bac bca cab cba
+meaning that it has 6 permutations
+-
+Counting Permutations
+An example of this is:
+Set A of n objects has
+.In! = .In x ( .In - 1 ) x ( .In - 2 ) x ... x 1 permutations
+Why n-1?
+Because for the 1 .SPst element .IP .SB1 there are n choices from A
+Meaning that for the 2nd element .IP .SB2 there are .In - 1 choices from A
+And so on, until there is 1 choice for the last element
+(P(n, r)) - The number of r-permutations of a set of n elements is given by: 
+P(n,r) = .Fn!/(n-r) Or .SPn .BP .SBr
+-
+Rule of Sums
+If { S .SB1 , S .SB2, ... , S k } is a partition of a finite set S, then:
+| S | = | S .SB1 | + |S .SB2 | + ... + | S k |
+None of the partitions are empty, and they are all disjoint meaning there entirety makes S
+-
+For example:
+S = {1, 2, 3, 4}
+S .SB1 = {1}
+S .SB2 = {2, 3, 4}
+|S| = |S .SB1 | + |S .SB2 | = 1 + 3 = 4
+This is generally used to divide a large problem into smaller sub-problems
+-
+(C(n, r)) – This denotes the number of r-combinations of a set of size n:
+C(n,r) = .Fn!/r!(n-r) Or .SPn .BC .SBr
+Both .SPn P .SBr and .SPn C .SBr can be typed into a calculator to work out
+-
+.B5.1.1 .BExample .BQuestions
+An artist wants to choose which colours to use for his new painting. He places 9 different tubes of paint
+into a bag. He this picks out 4 different tubes of paint out of the bag. How many different colour
+combinations can he choose?
+- 924
+- 3024
+- 126
+- 756
+A professional snooker player has placed 7 unique balls on the table. He is asked to pot 5 of the balls.
+How many different ways can he pot the 5 balls?
+- 504
+- 756
+- 21
+- 358
+
+
