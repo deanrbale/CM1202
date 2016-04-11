@@ -14,6 +14,7 @@ class Question:
 					self.__questionInformation = row[1]
 					self.__correctAnswer = row[2]
 					self.__incorrectAnswers = [row[3],row[4],row[5]]
+			
 
 	def __str__(self):
 		a = 'Question Number: ' + str(self.__questionNumber) + ' | Question Information: ' + self.__questionInformation +  ' | Correct Answer: ' + self.__correctAnswer + ' | Incorrect Answers: ' + self.__incorrectAnswers[0] + ', '+ self.__incorrectAnswers[1] + ', '+ self.__incorrectAnswers[2]

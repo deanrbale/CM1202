@@ -238,7 +238,6 @@ class  TestFrame(tk.Frame):
 
 	def addDetailsTemplate(self):
 
-
 		self.lblFeedbackQuestion = tk.Label(self, text='default value', justify='left', font=NORMAL_FONT, wraplength=500, height=5)
 		self.lblFeedbackQuestion.grid(row=1, column=2, columnspan=2, rowspan=1, padx=(40,50), pady=(20,20), sticky="w")
 
@@ -255,7 +254,6 @@ class  TestFrame(tk.Frame):
 		self.lblGiven.grid(row=5, column=2, columnspan=1, rowspan=1, padx=(40,0), pady=(0,0), sticky='w')
 
 	def addSpinbox(self ):
-
 
 		self.listQuestions = tk.Listbox(self, height= 5, width=50, font=NORMAL_FONT, selectmode=tk.SINGLE)
 		self.scroll = ttk.Scrollbar(self)
@@ -365,8 +363,11 @@ class  TestFrame(tk.Frame):
 
 	def displayTestData(self, test):
 
-
+		testLength = test.getNumberOfQuestions()
 		
+		
+
+
 		pass
 
 	def nextQuestion(self):
@@ -378,6 +379,7 @@ class  TestFrame(tk.Frame):
 		else:
 			self.markQuestion(givenAnswer)
 			if test.getCurrentQuestionNumber() == 20 :
+				test.saveMarks('ForenameTest','SurnameTest')
 				self.hideQuestionTemplate()
 				self.displayTestData(test)
 				self.showFeedbackTemplate()
