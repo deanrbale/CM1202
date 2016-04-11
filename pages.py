@@ -218,48 +218,45 @@ class  TestFrame(tk.Frame):
 		self.varFeedback = tk.StringVar()
 		self.varFeedback.set("Thank you for completing the test for the module " + self.__associatedModule.getModuleCode() + ". Please review each question and look at the ones that you got wrong, if any.")
 
-		self.lblFeedbackTitle = tk.Label(self, textvariable=self.titleVariable, justify='center', font=EXTRA_LARGE_FONT, wraplength=400)
+		self.lblFeedbackTitle = tk.Label(self, textvariable=self.varFeedbackTitle, justify='center', font=EXTRA_LARGE_FONT, wraplength=400)
 		self.lblFeedbackTitle.grid( row=0, column=0,  columnspan=1,  rowspan=1, padx=(self.__column0xpad,50), pady=(self.__row0ypad,20), sticky="n")
 
-		self.lblFeedbackMessage = tk.Label(self, textvariable=self.labelVariable, justify='left', font=NORMAL_FONT, wraplength=400)
+		self.lblFeedbackMessage = tk.Label(self, textvariable=self.varFeedback, justify='left', font=NORMAL_FONT, wraplength=400)
 		self.lblFeedbackMessage.grid(row=1, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad,50), pady=(20,50), sticky="w")
 
 		self.lblMarks = tk.Label(self, text='0/20', justify='left', font=EXTRA_LARGE_FONT)
-		self.lblMarks.grid(row=0, column=3, columnspan=1, rowspan=1, padx=(50,self.__column0xpad), pady=(self.__row0ypad,20), sticky="e")
+		self.lblMarks.grid(row=0, column=2, columnspan=1, rowspan=1, padx=(400,0), pady=(self.__row0ypad,20), sticky="w")
 
-		self.addSpinbox()
+		self.addListbox()
 
 		self.addDetailsTemplate()
 
-		self.butFeedbackMenu = tk.Button(self, text="Back to Menu", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
-		self.butFeedbackMenu.bind("<Enter>", lambda event, x=self.butMenu: x.configure(bg="#80dfff"))
-		self.butFeedbackMenu.bind("<Leave>", lambda event, x=self.butMenu: x.configure(bg="#d9d9d9"))
-		self.butFeedbackMenu.grid(row=6, column=0, columnspan=4, rowspan=1, padx=(0,0), pady=(75,0), sticky="s")
+		self.butFeedbackMenu = tk.Button(self, text="Finished", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
+		self.butFeedbackMenu.bind("<Enter>", lambda event, x=self.butFeedbackMenu: x.configure(bg="#80dfff"))
+		self.butFeedbackMenu.bind("<Leave>", lambda event, x=self.butFeedbackMenu: x.configure(bg="#d9d9d9"))
+		self.butFeedbackMenu.grid(row=6, column=2, columnspan=1, rowspan=1, padx=(300,0), pady=(75,0), sticky="w")
 
 	def addDetailsTemplate(self):
 
-		self.lblFeedbackQuestion = tk.Label(self, text='default value', justify='left', font=NORMAL_FONT, wraplength=500, height=5)
+		self.lblFeedbackQuestion = tk.Label(self, text='', justify='left', font=NORMAL_FONT, wraplength=500, height=5)
 		self.lblFeedbackQuestion.grid(row=1, column=2, columnspan=2, rowspan=1, padx=(40,50), pady=(20,20), sticky="w")
 
 		self.lblCorrectTitle = tk.Label(self, text='Correct Answer:', font=NORMAL_FONT, justify='left')
 		self.lblCorrectTitle.grid(row=2, column=2, columnspan=1, rowspan=1, padx=(40,0), pady=(25,0), sticky='w')
 
-		self.lblCorrect = tk.Label(self, text='default value', font=NORMAL_FONT, justify='left')
+		self.lblCorrect = tk.Label(self, text='', font=NORMAL_FONT, justify='left')
 		self.lblCorrect.grid(row=3, column=2, columnspan=1, rowspan=1, padx=(40,0), pady=(0,0), sticky='w')
 
 		self.lblGivenTitle = tk.Label(self, text='Selected Answer:', font=NORMAL_FONT, justify='left')
 		self.lblGivenTitle.grid(row=4, column=2, columnspan=1, rowspan=1, padx=(40,0), pady=(25,0), sticky='w')
 
-		self.lblGiven = tk.Label(self, text='default value', font=NORMAL_FONT, justify='left')
+		self.lblGiven = tk.Label(self, text='', font=NORMAL_FONT, justify='left')
 		self.lblGiven.grid(row=5, column=2, columnspan=1, rowspan=1, padx=(40,0), pady=(0,0), sticky='w')
 
-	def addSpinbox(self ):
+	def addListbox(self ):
 
 		self.listQuestions = tk.Listbox(self, height= 5, width=50, font=NORMAL_FONT, selectmode=tk.SINGLE)
 		self.scroll = ttk.Scrollbar(self)
-
-		for item in range(1,21):                   
-			self.listQuestions.insert(tk.END, 'Question ' +str(item)  )
 
 		self.listQuestions.configure(yscrollcommand=self.scroll.set)
 		self.scroll.configure( command= self.listQuestions.yview)                     
@@ -270,7 +267,16 @@ class  TestFrame(tk.Frame):
 		self.listQuestions.grid(row=2, column=0, columnspan=1, rowspan=3, padx=(self.__column0xpad,0), pady=(25,0), sticky="nw") 
 		self.scroll.grid(row=2, column=1, columnspan=1,  rowspan=3, padx=(0,0), pady=(25,0), sticky="ns") 
 
+		self.listQuestions.bind("<<ListboxSelect>>", self.listQuestionClick)
+
 		pass
+
+	def listQuestionClick(self, event):
+
+		selected = self.listQuestions.curselection()
+		questionNumber = selected[0] + 1
+		test = self.__associatedModule.getModuleTest()
+		self.displayTestQuestionForFeedback(test, questionNumber)
 
 	def displayQuestionDetails(self, question):
 		'Edits widgets of the created in questionTemplate() with the details of the question passes as an argument'
@@ -305,7 +311,7 @@ class  TestFrame(tk.Frame):
 		'Method used to display question feedback.'
 
 		popupFeedback = tk.Tk()
-		popupFeedback.geometry("500x400+500+300")
+		popupFeedback.geometry("500x400+500+200")
 		popupFeedback.grid()
 		popupFeedback.wm_title("Instant feedback!")
 
@@ -337,6 +343,7 @@ class  TestFrame(tk.Frame):
 
 		butOkay = ttk.Button(popupFeedback, text="Okay", command = popupFeedback.destroy)
 		butOkay.grid(row=7, column=0, columnspan=1, rowspan=1, padx=(0,0), pady=(25,0), sticky="s")
+		butOkay.focus_set()
 
 	def promptAnswer(self):
 		'Method used to display question feedback.'
@@ -350,25 +357,56 @@ class  TestFrame(tk.Frame):
 		butOkay = ttk.Button(popupFeedback, text="Okay", command = popupFeedback.destroy)
 		butOkay.pack()
 
-	def markQuestion(self, givenAnswer):
+	def markQuestion(self, test, givenAnswer):
 		'Mark the current question with the answer given and correct answer.'
-		correct = self.__associatedModule.getModuleTest().checkAnswer(givenAnswer)
+		correct = test.checkAnswer(givenAnswer)
 		if correct:
-			self.__associatedModule.getModuleTest().incCurrentMark()
-		question = self.__associatedModule.getModuleTest().getQuestionDetails()
+			test.incCurrentMark()
+		question = test.getQuestionDetails()
+		#self.questionFeedback(question, givenAnswer, correct)	
 
+	def displayTestQuestionForFeedback(self, test, questionNumber):
+		question = test.getQuestionDetails(questionNumber)
+		self.lblFeedbackQuestion.configure(text=question.getQuestionInfo())
 
+		correct = question.getCorrectAnswer()
+		selected = test.getSelectedAnswer(questionNumber)
 
-		self.questionFeedback(question, givenAnswer, correct)	
+		self.lblCorrect.configure(text=correct)
+		self.lblGiven.configure(text=selected)
+
+		if selected == correct:
+			self.lblGiven.configure(fg='green')
+		else:
+			self.lblGiven.configure(fg='red')
+
+	def colourListBox (self, test):
+
+		for index in range(0, test.getNumberOfQuestions()):
+			correct = test.getQuestionDetails(index + 1).getCorrectAnswer()
+			selected = test.getSelectedAnswer(index + 1)
+
+			if selected == correct:
+				self.listQuestions.itemconfig(index, fg='green')
+			else:
+				self.listQuestions.itemconfig(index,fg='red')
 
 	def displayTestData(self, test):
 
+		if self.listQuestions.size() != 0:
+			self.listQuestions.delete(0,self.listQuestions.size() -1 )
 		testLength = test.getNumberOfQuestions()
-		
-		
 
+		for item in range(1,testLength + 1):                   
+			self.listQuestions.insert(tk.END, 'Question ' +str(item)  )
 
-		pass
+		self.lblMarks.configure(text=str(test.getCurrentMark()) + '/' + str(test.getNumberOfQuestions()))
+
+		self.colourListBox(test)
+
+		self.displayTestQuestionForFeedback(test, 1)
+		self.listQuestions.activate(0)
+		self.listQuestions.index(0)
 
 	def nextQuestion(self):
 		'Method used when going to the next question.'
@@ -377,8 +415,9 @@ class  TestFrame(tk.Frame):
 		if givenAnswer == '':
 			self.promptAnswer()
 		else:
-			self.markQuestion(givenAnswer)
-			if test.getCurrentQuestionNumber() == 20 :
+			self.markQuestion(test, givenAnswer)
+			test.addSelectedAnswer(givenAnswer)
+			if test.getCurrentQuestionNumber() == test.getNumberOfQuestions() :
 				test.saveMarks('ForenameTest','SurnameTest')
 				self.hideQuestionTemplate()
 				self.displayTestData(test)
@@ -466,6 +505,11 @@ class  TestFrame(tk.Frame):
 		self.lblGivenTitle.grid_remove()
 		self.lblGiven.grid_remove()
 
+	def setCommands(self, controller, menu):
+
+		self.butMenu.configure(command=lambda: controller.show_frame(menu))
+		self.butStart.configure(command=lambda: self.startTest())
+		self.butFeedbackMenu.configure(command=lambda: controller.show_frame(menu))
 
 class  LessonFrame(tk.Frame):
 

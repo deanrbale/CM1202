@@ -12,6 +12,7 @@ class Test:
 		self.__currentQuestion = 1
 		self.__currentMark = 0
 		self.__questions = [Question(moduleCode, i) for i in range(1, numberOfQuestions + 1)]
+		self.__selectedAnswers = []
 
 	def getQuestionDetails(self, questionNumber = -1):
 		if questionNumber == -1:
@@ -25,11 +26,20 @@ class Test:
 	def getCurrentQuestionNumber(self):
 		return self.__currentQuestion
 
+	def getSelectedAnswer(self, questionNumber):
+		return self.__selectedAnswers[questionNumber - 1]
+
+	def getCurrentMark(self):
+		return self.__currentMark
+
 	def incCurrentQuestion(self):
 		self.__currentQuestion += 1
 
 	def incCurrentMark(self):
 		self.__currentMark += 1
+
+	def addSelectedAnswer(self, answer):
+		self.__selectedAnswers.append(str(answer))
 
 	def generateQuestion(self):
 

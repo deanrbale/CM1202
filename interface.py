@@ -93,27 +93,13 @@ class TestModule001 (TestFrame):
 
 	def __init__(self, parent, controller, mCode, mName, lCompleted=False):
 		TestFrame.__init__(self, parent, controller, mCode, mName, lCompleted)
-		self.setCommands(controller)
-
-	def setCommands(self, controller):
-
-		self.butMenu.configure(command=lambda: controller.show_frame(HomePage))
-		self.butStart.configure(command=lambda: self.startTest())
-
-	
+		self.setCommands(controller, HomePage)
 
 class TestModule002 (TestFrame):
 
 	def __init__(self, parent, controller, mCode, mName, lCompleted=False):
 		TestFrame.__init__(self, parent, controller, mCode, mName, lCompleted)
-		self.butMenu.configure(command=lambda: controller.show_frame(HomePage))
-
-		self.setCommands(controller)
-
-	def setCommands(self, controller):
-
-		self.butMenu.configure(command=lambda: controller.show_frame(HomePage))
-		self.butStart.configure(command=lambda: self.startTest())
+		self.setCommands(controller, HomePage)
 
 
 class LoginPage (LoginFrame):
@@ -125,8 +111,6 @@ class LoginPage (LoginFrame):
 	def succesfullLogin(self, controller):
 		controller.geometry("1100x618+150+50")
 		controller.show_frame(HomePage)
-
-
 
 def main():
 
