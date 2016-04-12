@@ -363,7 +363,7 @@ class  TestFrame(tk.Frame):
 		if correct:
 			test.incCurrentMark()
 		question = test.getQuestionDetails()
-		#self.questionFeedback(question, givenAnswer, correct)	
+		self.questionFeedback(question, givenAnswer, correct)	
 
 	def displayTestQuestionForFeedback(self, test, questionNumber):
 		question = test.getQuestionDetails(questionNumber)
