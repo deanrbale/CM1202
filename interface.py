@@ -52,7 +52,7 @@ class CourseworkApp(tk.Tk):
 
 		tk.Tk.config(self, menu=menubar)
 
-	def validLogin(self, controller):
+	def validLogin(self):
 
 		for F in ( HomePage, TestScores, SearchPage):
 
