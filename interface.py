@@ -206,28 +206,28 @@ class LoginPage (LoginFrame):
 			headers = next(rdr, None)
 			for rows in rdr:
 				users[rows[3]] = (rows[4], rows[1])
-			if username == "":
- 				tm.showerror("Login error", "A username must be entered")
+			if username == "" :
  				checked1 = True
 			if password == "":
-				tm.showerror("Login error", "A password must be entered")
 				checked2 = True
-		for k, v in users.items():
-			if username == k and password == v[0]:
-				if v[1] == 'student': #This would allow a seperate page to load if the user is a student
-					controller.geometry("1100x618+150+50")
-					controller.show_frame(HomePage)
-					break
-					#StudentProfile.start()
-				if v[1] == 'lecturer': #This would allow a seperate page to load if the user is a lecturer
-					controller.geometry("1100x618+150+50")
-					controller.show_frame(HomePage)
-					break
-					#LecturerProfile.start()
-		if username != k and checked1 == False:
-			tm.showerror("Login error", "Your username is incorrect")
-		if password != v[0] and checked2 == False:
-			tm.showerror("Login error", "Your password is incorrect")
+			if checked2 or checked1:
+				tm.showerror("Login error", "A username and password must be entered")
+			else:
+				for k, v in users.items():
+					if username == k and password == v[0]:
+						if v[1] == 'student': #This would allow a seperate page to load if the user is a student
+							controller.geometry("1100x618+150+50")
+							controller.show_frame(HomePage)
+							break
+							#StudentProfile.start()
+						if v[1] == 'lecturer': #This would allow a seperate page to load if the user is a lecturer
+							controller.geometry("1100x618+150+50")
+							controller.show_frame(HomePage)
+							break
+							#LecturerProfile.start()
+				if (username != k and checked1 == False) or (password != v[0] and checked2 == False):
+					tm.showerror("Login error", "Your username and/or password is incorrect")
+
 
 
 
