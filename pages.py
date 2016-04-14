@@ -1,9 +1,13 @@
 import random as rdm
 import tkinter as tk
 from tkinter import ttk
+import tkinter.messagebox as tm
+from tkinter import scrolledtext
 from module import *
+import csv
 
 EXTRA_LARGE_FONT = ("MS", 22, "bold")
+L_FONT = ("Verdana", 12)
 LARGE_BUTTON_FONT = ("MS", 14, "bold")
 LARGE_FONT= ("MS", 14, "bold")
 NORMAL_FONT= ("MS", 12)
@@ -22,9 +26,6 @@ def popupMessage(message):
 	butOkay = ttk.Button(popupMsg, text="Okay", command = popupMsg.destroy)
 	butOkay.pack()
 	popupMsg.mainloop()
-
-
-
 
 class LoginFrame(tk.Frame):
 	'Login Frame'
@@ -111,7 +112,7 @@ class MenuFrame(tk.Frame):
 		self.scroll.grid(row=1, column=3, columnspan=1,  rowspan=1, padx=(0,0), pady=(0,0), sticky="ns")  
 		self.listModule.activate(0)
 
-		self.butLesson = tk.Button(self, text="Lesson", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
+		self.butLesson = tk.Button(self, text="View Lesson", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
 		self.butLesson.bind("<Enter>", lambda event, x=self.butLesson: x.configure(bg="#80dfff"))
 		self.butLesson.bind("<Leave>", lambda event, x=self.butLesson: x.configure(bg="#d9d9d9"))
 		self.butLesson.grid(row=2, column=1, columnspan=1, rowspan=1, padx=(0,0), pady=(100,0), sticky="w")   
@@ -120,6 +121,16 @@ class MenuFrame(tk.Frame):
 		self.butTest.bind("<Enter>", lambda event, x=self.butTest: x.configure(bg="#80dfff"))
 		self.butTest.bind("<Leave>", lambda event, x=self.butTest: x.configure(bg="#d9d9d9"))
 		self.butTest.grid(row=2, column=2, columnspan=1, rowspan=1, padx=(0,0), pady=(100,0), sticky="e")
+
+		self.butEdit = tk.Button(self, text="Edit Lesson", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
+		self.butEdit.bind("<Enter>", lambda event, x=self.butEdit: x.configure(bg="#80dfff"))
+		self.butEdit.bind("<Leave>", lambda event, x=self.butEdit: x.configure(bg="#d9d9d9"))
+		self.butEdit.grid(row=3, column=2, columnspan=1, rowspan=1, padx=(0,0), pady=(50,0), sticky="e")
+
+		self.butFeedback = tk.Button(self, text="View Feedback", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
+		self.butFeedback.bind("<Enter>", lambda event, x=self.butFeedback: x.configure(bg="#80dfff"))
+		self.butFeedback.bind("<Leave>", lambda event, x=self.butFeedback: x.configure(bg="#d9d9d9"))
+		self.butFeedback.grid(row=3, column=1, columnspan=1, rowspan=1, padx=(0,0), pady=(50,0), sticky="e")
 
 class  TestFrame(tk.Frame):
 	'Test frame'
@@ -511,12 +522,500 @@ class  TestFrame(tk.Frame):
 		self.butStart.configure(command=lambda: self.startTest())
 		self.butFeedbackMenu.configure(command=lambda: controller.show_frame(menu))
 
-class  LessonFrame(tk.Frame):
+class LectureFrame(tk.Frame):
+
+	def __init__(self, parent , controller, moduleCode):
+		tk.Frame.__init__(self, parent)
+		self.__lesson = "lesson_"+ moduleCode+ ".txt"
+		self.__title = 'title'
+        #self.grid()
+		self.draw_widgets()
+		self.button()
+
+    
+	def draw_widgets(self):
+	
+		self.cframe = tk.Frame(self)
+		self.cframe.grid(row=0, column=0, padx=(100,0), sticky='news')
+		self.canv = tk.Canvas(self.cframe, width=976, height=560)  #612                    #this wraps text widgets within
+		self.canv.grid(row=0, column=0, sticky='news')                       #a canvas so that they can be
+		self.vscroll = tk.Scrollbar(self.cframe, orient=tk.VERTICAL, command=self.canv.yview) #scrolled through
+		self.vscroll.grid(row=0, column=1, sticky='ns')
+		self.canv["yscrollcommand"] = self.vscroll.set
+		self.aframe = tk.Frame(self.canv)
+		id = self.canv.create_window(0,0,window=self.aframe, anchor='nw')
+
+		Num = 0
+		file = open(self.__lesson,"r")
+		for line in file:
+			if line in ['\n', '\r\n']: #if line is blank move down a row
+				Num += 1			
+			self.fileInputFrame = tk.Frame(self.aframe)
+			self.fileInputFrame.grid(row = Num)
+			count = 0
+			wordLen = 0
+			for word in line.split():
+				wordLen = wordLen + len(word)
+				if wordLen > 96:
+					Num += 1
+					self.fileInputFrame = tk.Frame(self.aframe) #is the length exceeds 110 move down a row
+					self.fileInputFrame.grid(row = Num)					
+				if word[0] == ".":
+					if word[1] == "B":
+						self.w = tk.Label(self.fileInputFrame, text = word[2:], font = ("Times", 15, "bold"))
+						self.w.grid(row = 0, column = count)
+						count += 1
+					elif word[1] == "U":
+						self.w = tk.Label(self.fileInputFrame, text = "\u2286", font = ("Times", 10, "bold"))
+						self.w.grid(row = 0, column = count)
+						count += 1
+					elif word[1] == "I":
+						self.w = tk.Label(self.fileInputFrame, text = word[2:], font = ("Times", 15, "italic"))
+						self.w.grid(row = 0, column = count)
+						count += 1
+					elif word[1] == "F":
+						if "/" in word:
+							word = word[2:].split("/")
+							if len(word[0]) > len(word[1]):
+								Avg = len(word[0])
+							else:
+								Avg = len(word[1])  #gernerate an undeline length based on the longest of the 2
+							underline = ""          #items in the fraction      
+							for i in range(0,Avg+5):
+								underline = underline + "-"					
+							self.SubFrame = tk.Frame(self.fileInputFrame)
+							self.SubFrame.grid(row = 0,column = count)
+							self.w = tk.Label(self.SubFrame, text = word[0], font = ("Times", 12), anchor = 's')
+							self.w.grid(row = 0, column = 0) #top of fraction
+							self.w = tk.Label(self.SubFrame, text = underline, font = ("Times", 4))
+							self.w.grid(row = 1, column = 0) #underline of fraction
+							self.v = tk.Label(self.SubFrame, text = word[1], font = ("Times", 12), anchor = 'n')
+							self.v.grid(row = 2, column = 0) #bottom of fraction
+							count += 1
+					elif word[1] == "S":
+						if word[2] == "P":
+							self.SubFrame = tk.Frame(self.fileInputFrame)
+							self.SubFrame.grid(row = 0,column = count)
+							self.w = tk.Label(self.SubFrame, text = word[3:], font = ("Times", 9))
+							self.w.grid(row = 0, column = 0)
+							self.v = tk.Label(self.SubFrame, text = "", font = ("Times", 6))
+							self.v.grid(row = 1, column = 0) #superscript
+							count += 1
+						elif word[2] == "B":
+							self.SubFrame = tk.Frame(self.fileInputFrame)
+							self.SubFrame.grid(row = 0,column = count)
+							self.w = tk.Label(self.SubFrame, text = word[3:], font = ("Times", 9))
+							self.w.grid(row = 1, column = 0)
+							self.v = tk.Label(self.SubFrame, text = "", font = ("Times", 6))
+							self.v.grid(row = 0, column = 0) #subscript
+							count += 1
+					else:
+						self.w = tk.Label(self.fileInputFrame, text = word, font = ("Times", 15))
+						self.w.grid(row = 0, column = count)
+						count += 1 #still print text if it starts with . and is not a command
+				else:
+					self.w = tk.Label(self.fileInputFrame, text = word, font = ("Times", 15))
+					self.w.grid(row = 0, column = count)
+					count += 1
+			Num += 1
+			self.aframe.update_idletasks()
+			self.canv["scrollregion"]=self.canv.bbox(tk.ALL) #update scroll region
+		
+	def button(self):
+		self.ButtonFrame = tk.Frame(self)
+		self.ButtonFrame.grid(row = 3) 
+		
+
+		self.butBack = ttk.Button(self.ButtonFrame, text='Back')
+		#butEdit['command'] = self.Back
+		self.butBack.grid(row = 0,column = 0,  pady=(25,0), padx=(0,50))	
+		
+		self.butTest = ttk.Button(self.ButtonFrame, text='Test')
+		#butEdit['command'] = self.Test
+		self.butTest.grid(row = 0,column = 2, pady=(25,0) )
+
+	def setCommands(self, controller, menu, test):
+
+		self.butBack.configure(command=lambda: controller.show_frame(menu))
+		self.butTest.configure(command=lambda: controller.show_frame(test))
+
+class EditorFrame(tk.Frame):
+	def __init__(self, parent , controller, moduleCode):
+		tk.Frame.__init__(self, parent)
+		self.__lesson = "lesson_"+ moduleCode+ ".txt"
+		#root.protocol('WM_DELETE_WINDOW', self.exit) ,this will ask if you want to save when you press the red [X]
+		self.textbox()
+		self.menubar()
+		
+	def textbox(self):
+		self.textPad = scrolledtext.ScrolledText(self, width = 115, height = 32)
+		read = open(self.__lesson,"r")
+		self.textPad.insert('1.0',read.read()) #creates a textbox with the contents of the file
+		self.textPad.grid(column = 0, row = 1, padx=(75,0))
+
+	def save(self):
+		file = open(self.__lesson,"w")
+		data = self.textPad.get('1.0', tk.END) #reads the lines and saves them to the text file
+		file.write(data)
+		file.close()
+
+	def exit(self, controller, menu):
+		if tm.askyesno("","Do you wish to save before quitting?"):
+			self.save()
+		controller.show_frame(menu)
+
+
+	def help(self):
+		label = tm.showinfo("Help", "Basic commands: .B - bold .I - italics .SB - subscript .SP - superscript .F - fraction .U - subset")
+
+	def menubar(self):
+		self.ButtonFrame = tk.Frame(self)
+		self.ButtonFrame.grid(row = 0) 
+		
+		self.butSave = ttk.Button(self.ButtonFrame, text='Save')
+		self.butSave['command'] = self.save
+		self.butSave.grid(row = 0,column = 1, pady=(20,20), padx=(25,25))
+
+		self.butHelp = ttk.Button(self.ButtonFrame, text='Help')
+		self.butHelp['command'] = self.help
+		self.butHelp.grid(row = 0,column = 0, pady=(20,20))	
+		
+		self.butBack = ttk.Button(self.ButtonFrame, text='Back')
+		self.butBack.grid(row = 0,column = 2, pady=(20,20))
+		
+	def setCommands(self, controller, menu):
+		self.butBack.configure(command=lambda: self.exit(controller, menu))
+
+class SearchScoresFrame(tk.Frame):
+    
+	def __init__(self, parent , controller):
+                     
+		tk.Frame.__init__(self, parent)        
+		label = tk.Label(self, text="Test Results",font = L_FONT)
+                                             
+		mbutton1 = tk.Button(self,text= "Display all scores",command = lambda: controller.show_frame(testScores) ,font = L_FONT) 
+		mbutton1.pack(pady=5)
+
+        
+		userEnt = tk.Entry(self)
+		userEnt.pack(pady=5)
+		userEnt.get()
+        
+		def printer():
+                                 
+			userSearch = userEnt.get()            
+			print( str(userSearch) )            
+         
+			cr = csv.reader(open("test_marks.csv"))         
+          
+			for row in cr:    
+				if userSearch in row:                                                         
+					text = tk.Label(self, text = "   ".join(row),font = L_FONT )                   
+					text.pack()        
+                 
+		tk.Button(self, text='Search', command=printer).pack()
+
+		label2 = tk.Label(self, text="Surname-Forename-Module-Mark-Test date-Test time",font = L_FONT)
+		label.pack(pady= 10)
+		label2.pack(pady= 13)
+                                                                                                                                                                                                    
+class TestScoresFrame(tk.Frame):   
+    
+	def __init__(self, parent, controller):
+		tk.Frame.__init__(self, parent)
+        
+		self.mbutton1 = tk.Button(self,text= "Seach Page",font = L_FONT)  
+		self.mbutton1.pack(pady=5)
+
+		label = tk.Label(self, text="All Test Results",font = L_FONT).pack()                
+		label2 = tk.Label(self, text="Surname-Forename-Module-Mark-Test date-Test time",font = L_FONT)        
+		label2.pack(pady= 13)
+
+		cro = csv.reader(open("test_marks.csv"))
+		for row in cro:
+			if "001" in row:
+				text1 = tk.Label(self, text ="   ".join(row), font= L_FONT).pack()
+	
+	def setCommands(self, controller, searchPage):
+		self.mbutton1.configure(command = lambda: controller.show_frame(searchPage))
+
+class FeedbackSubmitFrame(tk.Frame):
+
+	def __init__(self, parent, controller, moduleList):
+		tk.Frame.__init__(self, parent)
+
+		self.__column0xpad = 90
+		self.__row0ypad = 50
+
+		self.lblTitle = tk.Label(self, text='User Feedback', justify='center', font=EXTRA_LARGE_FONT, wraplength=400)
+		self.lblTitle.grid( row=0, column=0,  columnspan=2,  rowspan=1, padx=(self.__column0xpad,50), pady=(self.__row0ypad,0), sticky="n")
+
+		self.lblMessage = tk.Label(self, text='Your feeback on this application would be appreciated' , justify='left', font=NORMAL_FONT, wraplength=400)
+		self.lblMessage.grid(row=1, column=0, columnspan=2, rowspan=1, padx=(self.__column0xpad,50), pady=(50,20),sticky="sw")
+  
+
+		self.butMenu = tk.Button(self, text="Back to Menu", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
+		self.butMenu.bind("<Enter>", lambda event, x=self.butMenu: x.configure(bg="#80dfff"))
+		self.butMenu.bind("<Leave>", lambda event, x=self.butMenu: x.configure(bg="#d9d9d9"))
+		self.butMenu.grid(row=8, column=0, columnspan=2, rowspan=1, padx=(self.__column0xpad,50), pady=(30,0), sticky="s")
+
+		self.butSubmit = tk.Button(self, text="Submit", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
+		self.butSubmit.bind("<Enter>", lambda event, x=self.butSubmit: x.configure(bg="#80dfff"))
+		self.butSubmit.bind("<Leave>", lambda event, x=self.butSubmit: x.configure(bg="#d9d9d9"))
+		self.butSubmit.grid(row=8, column=1, columnspan=3, rowspan=1, padx=(200,0), pady=(30,0), sticky="s")
+		self.butSubmit.configure(command=lambda: self.submitFeedback())
+
+		self.addAnonymous()
+		self.addNameOption()
+		self.addListbox(moduleList)
+		self.addFeedbackTextBox()
+
+	def addAnonymous(self):
+		self.ckbxAnonymousvar = tk.IntVar()
+		self.ckbxAnonymous = tk.Checkbutton(self, text='Select this box if you wish to remain anonymous', justify='left', font=NORMAL_FONT, variable=self.ckbxAnonymousvar)
+		self.ckbxAnonymous.grid(row=2, column=0, columnspan=2, rowspan=1, padx=(self.__column0xpad,0), pady=(50,0), sticky="sw")
+		self.ckbxAnonymous.configure(command=lambda:  self.checkboxClick())
+
+	def checkboxClick(self):
+		if self.ckbxAnonymousvar.get() == 1:
+			self.entNumber.configure(state=tk.DISABLED)
+			self.entName.configure(state=tk.DISABLED)
+		else:
+			self.entNumber.configure(state=tk.NORMAL)
+			self.entName.configure(state=tk.NORMAL)
+
+	def addNameOption(self):
+
+		self.lblName = tk.Label(self, text="Name", justify='left', font=NORMAL_FONT, wraplength=400)
+		self.lblName.grid(row=3, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad,20), pady=(20,0), sticky="e")
+
+		self.entName = ttk.Entry(self, width=30)
+		self.entName.grid(row=3, column=1, columnspan=1, rowspan=1, padx=(0,0), pady=(20,0), sticky="w")
+
+		self.lblNumber = tk.Label(self, text="Student Number", justify='left', font=NORMAL_FONT, wraplength=400)
+		self.lblNumber.grid(row=4, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad,20), pady=(10,0), sticky="e")
+
+		self.entNumber = ttk.Entry(self, width=30)
+		self.entNumber.grid(row=4, column=1, columnspan=1, rowspan=1, padx=(0,0), pady=(10,0), sticky="w")
+	
+	def addListbox(self, moduleList):
+
+		self.listModulesLabel = tk.Label(self, text='Select module associated with your feedback or whether it is a general comment' , justify='left', font=NORMAL_FONT, wraplength=400)
+		self.listModulesLabel.grid(row=1, column=2, columnspan=2, rowspan=1, padx=(0,0), pady=(0,20), sticky="sw")
+
+		self.listModules = tk.Listbox(self, height= 3, width=60, font=SMALL_FONT, selectmode=tk.SINGLE)
+		self.scroll = ttk.Scrollbar(self)
+
+		self.listModules.configure(yscrollcommand=self.scroll.set)
+		self.scroll.configure( command= self.listModules.yview)                     
+
+		self.listModules.selection_set(0, tk.END)
+		self.listModules.focus_set()
+
+		self.listModules.grid(row=2, column=2, columnspan=2, rowspan=1, padx=(0,0), pady=(20,0), sticky="nw") 
+		self.scroll.grid(row=2, column=4, columnspan=1,  rowspan=1, padx=(0,0), pady=(20,0), sticky="ns") 
+
+		for mod in moduleList:                   
+			self.listModules.insert(tk.END, mod)
+		self.listModules.insert(tk.END, 'General Comment')
+		self.listModules.insert(tk.END, 'Software Bug')
+
+
+	def addFeedbackTextBox(self):
+
+		self.lblFeedback = tk.Label(self, text='Leave your comments in the box below' , justify='left', font=NORMAL_FONT, wraplength=400)
+		self.lblFeedback.grid(row=3, column=2, columnspan=1, rowspan=1, padx=(0,0), pady=(0,0), sticky="sw")
+
+
+		self.txtbxFeedback = tk.Text (self, width=60, height=6 ,font=SMALL_FONT)
+		self.scrollFeedback = ttk.Scrollbar(self)
+
+		self.txtbxFeedback.configure(yscrollcommand=self.scrollFeedback.set)
+		self.scrollFeedback.configure( command= self.txtbxFeedback.yview)
+
+		self.butClear = ttk.Button(self, text="Clear")
+		self.butClear.grid(row=3, column=3, columnspan=1, rowspan=1, padx=(0,0), pady=(0,0), sticky="s")
+		self.butClear.configure(command=lambda: self.txtbxFeedback.delete('0.0', tk.END))
+
+		self.txtbxFeedback.grid(row=4, column=2, columnspan=2,  rowspan=2, padx=(0,0), pady=(20,0), sticky="nw")
+		self.scrollFeedback.grid(row=4, column=4, columnspan=1,  rowspan=2, padx=(0,0), pady=(20,0), sticky="ns")
+
+		self.emptybox = self.txtbxFeedback.get('0.0', tk.END)
+
+	def checkEntriesAreFilled(self):
+		completed = True
+		if self.ckbxAnonymousvar.get() == 0:
+			if (self.entNumber.get() == '') or (self.entName.get() == ''):
+				completed = False
+
+
+		selection = self.listModules.curselection()
+		if (len(selection) == 0):
+			completed = False
+
+
+		charPresent = False
+		for char in self.txtbxFeedback.get('0.0', tk.END):
+			if char.isalnum():
+				charPresent = True
+		if completed:
+			completed = charPresent
+
+		return completed 
+		
+	def getFeedback(self):
+		feedbackInfo = []
+		if self.ckbxAnonymousvar.get() == 0:
+			feedbackInfo.append(self.entNumber.get())
+			feedbackInfo.append(self.entName.get())
+		else:
+			feedbackInfo.append('Anonymous')
+			feedbackInfo.append('Anonymous')
+		selection = self.listModules.curselection()
+		feedbackInfo.append(self.listModules.get(selection[0]))
+		text = self.txtbxFeedback.get('0.0', tk.END)
+		withoutNewLineText = text.replace('\n','|')
+		feedbackInfo.append(withoutNewLineText)
+
+		return feedbackInfo
+
+	def promptFeedback(self, title, msg):
+		'Method used to display ask for feedback.'
+
+		popupFeedback = tk.Tk()
+		popupFeedback.geometry("300x100+600+300")
+
+		popupFeedback.wm_title(title)
+		labTitle = tk.Label(popupFeedback, text=msg, font=NORMAL_FONT)
+		labTitle.pack(side="top", pady=10)
+		butOkay = ttk.Button(popupFeedback, text="Okay", command = popupFeedback.destroy)
+		butOkay.pack()
+
+	def submitFeedback(self):
+		if self.checkEntriesAreFilled():
+			feedbackInfo = self.getFeedback()
+			try:
+				with open('appFeedback.csv', 'a') as csvfile:
+					fileWriter = csv.writer(csvfile, delimiter='~')
+					fileWriter.writerow(feedbackInfo)
+					self.promptFeedback('Submitted', 'Thank you for you feedback!')
+			except IOError:
+				print('error')
+			else:
+				pass
+		else:
+			self.promptFeedback("Attention!",'You must complete the feedback \n form before clicking submit .')
+
+	def setCommands(self, controller, menu):
+		self.butMenu.configure(command=lambda: controller.show_frame(menu))
+
+class FeedbackReviewFrame(tk.Frame):
 
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent)
-		self.lblTitle = ttk.Label(self, text="Lesson", font=LARGE_FONT)
-		self.lblTitle.grid(row=0, column=0, columnspan=2, sticky="N")
 
-		self.butMenu = tk.Button(self, text="Menu")
-		self.butMenu.grid(row=10, column=10, columnspan=2, sticky="N")
+		self.__column0xpad = 90
+		self.__row0ypad = 50
+
+		self.__allFeedback = []
+
+		self.lblTitle = tk.Label(self, text='User Feedback', justify='center', font=EXTRA_LARGE_FONT, wraplength=400)
+		self.lblTitle.grid( row=0, column=0,  columnspan=2,  rowspan=1, padx=(self.__column0xpad,50), pady=(self.__row0ypad,0), sticky="n")
+
+		self.lblMessage = tk.Label(self, text='Here you can look at student feedback about this application.' , justify='left', font=NORMAL_FONT, wraplength=400)
+		self.lblMessage.grid(row=1, column=0, columnspan=2, rowspan=1, padx=(self.__column0xpad,50), pady=(30,0),sticky="sw")
+  
+		self.lblName = tk.Label(self, text='Name:' , justify='left', font=NORMAL_FONT, wraplength=400)
+		self.lblName.grid(row=4, column=0, columnspan=2, rowspan=1, padx=(self.__column0xpad,50), pady=(20,0),sticky="sw")
+
+		self.lblNumber = tk.Label(self, text='Student Number:' , justify='left', font=NORMAL_FONT, wraplength=400)
+		self.lblNumber.grid(row=5, column=0, columnspan=2, rowspan=1, padx=(self.__column0xpad,50), pady=(20,0),sticky="sw")
+
+		self.lblReference = tk.Label(self, text='Brief Description:' , justify='left', font=NORMAL_FONT, wraplength=400)
+		self.lblReference.grid(row=6, column=0, columnspan=2, rowspan=1, padx=(self.__column0xpad,50), pady=(20,0),sticky="sw")
+
+		self.addListbox()
+		self.fillListBoxWithFeedback()
+
+		self.addFeedbackTextBox()
+
+
+		self.butMenu = tk.Button(self, text="Back to Menu", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
+		self.butMenu.bind("<Enter>", lambda event, x=self.butMenu: x.configure(bg="#80dfff"))
+		self.butMenu.bind("<Leave>", lambda event, x=self.butMenu: x.configure(bg="#d9d9d9"))
+		self.butMenu.grid(row=8, column=0, columnspan=5, rowspan=1, padx=(self.__column0xpad,50), pady=(30,0), sticky="s")
+
+	def addFeedbackTextBox(self):
+
+		self.lblFeedback = tk.Label(self, text='Feedback:' , justify='left', font=NORMAL_FONT, wraplength=400)
+		self.lblFeedback.grid(row=2, column=2, columnspan=1, rowspan=1, padx=(30,0), pady=(0,0), sticky="sw")
+
+
+		self.txtbxFeedback = tk.Text (self, width=60, height=10 ,font=SMALL_FONT, state=tk.DISABLED)
+		self.scrollFeedback = ttk.Scrollbar(self)
+
+		self.txtbxFeedback.configure(yscrollcommand=self.scrollFeedback.set)
+		self.scrollFeedback.configure( command= self.txtbxFeedback.yview)
+
+		# self.butClear = ttk.Button(self, text="Clear")
+		# self.butClear.grid(row=3, column=3, columnspan=1, rowspan=1, padx=(0,0), pady=(0,0), sticky="s")
+		# self.butClear.configure(command=lambda: self.txtbxFeedback.delete('0.0', tk.END))
+
+		self.txtbxFeedback.grid(row=3, column=2, columnspan=2,  rowspan=3, padx=(30,0), pady=(20,0), sticky="nw")
+		self.scrollFeedback.grid(row=3, column=4, columnspan=1,  rowspan=3, padx=(0,0), pady=(20,0), sticky="ns")
+
+		self.emptybox = self.txtbxFeedback.get('0.0', tk.END)
+
+	def addListbox(self):
+
+		self.listFeedbackLabel = tk.Label(self, text='Select feedback to look at' , justify='left', font=NORMAL_FONT, wraplength=400)
+		self.listFeedbackLabel.grid(row=2, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad,0), pady=(20,20), sticky="sw")
+
+		self.listFeedback = tk.Listbox(self, height= 3, width=60, font=SMALL_FONT, selectmode=tk.SINGLE)
+		self.scroll = ttk.Scrollbar(self)
+
+		self.listFeedback.configure(yscrollcommand=self.scroll.set)
+		self.scroll.configure( command= self.listFeedback.yview)                     
+
+		self.listFeedback.selection_set(0, tk.END)
+		self.listFeedback.focus_set()
+
+		self.listFeedback.bind("<<ListboxSelect>>", self.listFeedbackClick)
+
+		self.listFeedback.grid(row=3, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad,0), pady=(20,0), sticky="nw") 
+		self.scroll.grid(row=3, column=1, columnspan=1,  rowspan=1, padx=(0,0), pady=(20,0), sticky="ns") 
+
+	def fillListBoxWithFeedback(self):
+		self.listFeedback.delete(0,tk.END)
+		with open('appFeedback.csv') as csvfile:
+			rdr = csv.reader(csvfile, delimiter='~')
+			for row in rdr:
+				try:
+					self.listFeedback.insert(tk.END, row[2] + ' - ' +row[0])
+					self.__allFeedback.append(row)
+				except:
+					pass
+
+	def listFeedbackClick(self, event):
+
+		selected = self.listFeedback.curselection()
+		feedbackIndex = selected[0]
+		feedback = self.__allFeedback[feedbackIndex]
+		
+
+		self.lblName.configure(text = 'Name: ' + feedback[1])
+		self.lblNumber.configure(text = 'Student Number: ' + feedback[0])
+		self.lblReference.configure(text = 'Brief Description: ' + feedback[2])
+		feedbackText = feedback[3]
+		formattedFeedbackText = feedbackText.replace('|','\n')
+		self.txtbxFeedback.configure(state=tk.NORMAL)
+		self.txtbxFeedback.delete('0.0', tk.END)
+		self.txtbxFeedback.insert('0.0', formattedFeedbackText)
+		self.txtbxFeedback.configure(state=tk.DISABLED)
+
+
+	def setCommands(self, controller, menu):
+		self.butMenu.configure(command=lambda: controller.show_frame(menu))
+
+
+
