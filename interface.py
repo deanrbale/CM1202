@@ -14,52 +14,19 @@ class CourseworkApp(tk.Tk):
 
 		tk.Tk.wm_title(self, "Group 4 DQS Coursework")
 
-		container = tk.Frame(self)
-		container.grid()
-		container.grid_rowconfigure(0, weight=1)
-		container.grid_columnconfigure(0, weight=1)
+		self.__container = tk.Frame(self)
+		self.__container.grid()
+		self.__container.grid_rowconfigure(0, weight=1)
+		self.__container.grid_columnconfigure(0, weight=1)
 
-		self.createMenuBar(container)
+		self.createMenuBar(self.__container)
 
 		self.frames = {}
 
-		for F in (LoginPage, HomePage, TestScores, SearchPage):
+		frame = LoginPage(self.__container, self)
+		self.frames[LoginPage] = frame
+		frame.grid(row=0, column=0, sticky="nsew")
 
-			frame = F(container, self)
-			self.frames[F] = frame
-			frame.grid(row=0, column=0, sticky="nsew")
-
-		frame = TestModule001(container, self, "001", 'Counting')
-		self.frames[TestModule001] = frame
-		frame.grid(row=0, column=0, sticky='nsew')
-
-		frame = TestModule002(container, self, "002", 'Probability')
-		self.frames[TestModule002] = frame
-		frame.grid(row=0, column=0, sticky='nsew')
-
-		frame = LessonModule001(container, self, "001")
-		self.frames[LessonModule001] = frame
-		frame.grid(row=0, column=0, sticky='nsew')
-
-		frame = LessonModule002(container, self, "002")
-		self.frames[LessonModule002] = frame
-		frame.grid(row=0, column=0, sticky='nsew')
-
-		frame = Editor001(container, self, "001")
-		self.frames[Editor001] = frame
-		frame.grid(row=0, column=0, sticky='nsew')
-
-		frame = Editor002(container, self, "002")
-		self.frames[Editor002] = frame
-		frame.grid(row=0, column=0, sticky='nsew')
-
-		frame = UserFeedback(container, self, ['Module - 001', 'Module - 002'])
-		self.frames[UserFeedback] = frame
-		frame.grid(row=0, column=0, sticky='nsew')
-
-		frame = ReviewFeedback(container, self)
-		self.frames[ReviewFeedback] = frame
-		frame.grid(row=0, column=0, sticky='nsew')
 
 
 
@@ -84,6 +51,47 @@ class CourseworkApp(tk.Tk):
 		menubar.add_cascade(label="Help", menu=infoMenu)
 
 		tk.Tk.config(self, menu=menubar)
+
+	def validLogin(self, controller):
+
+		for F in ( HomePage, TestScores, SearchPage):
+
+			frame = F(self.__container, self)
+			self.frames[F] = frame
+			frame.grid(row=0, column=0, sticky="nsew")
+
+		frame = TestModule001(self.__container, self, "001", 'Counting')
+		self.frames[TestModule001] = frame
+		frame.grid(row=0, column=0, sticky='nsew')
+
+		frame = TestModule002(self.__container, self, "002", 'Probability')
+		self.frames[TestModule002] = frame
+		frame.grid(row=0, column=0, sticky='nsew')
+
+		frame = LessonModule001(self.__container, self, "001")
+		self.frames[LessonModule001] = frame
+		frame.grid(row=0, column=0, sticky='nsew')
+
+		frame = LessonModule002(self.__container, self, "002")
+		self.frames[LessonModule002] = frame
+		frame.grid(row=0, column=0, sticky='nsew')
+
+		frame = Editor001(self.__container, self, "001")
+		self.frames[Editor001] = frame
+		frame.grid(row=0, column=0, sticky='nsew')
+
+		frame = Editor002(self.__container, self, "002")
+		self.frames[Editor002] = frame
+		frame.grid(row=0, column=0, sticky='nsew')
+
+		frame = UserFeedback(self.__container, self, ['Module - 001', 'Module - 002'])
+		self.frames[UserFeedback] = frame
+		frame.grid(row=0, column=0, sticky='nsew')
+
+		frame = ReviewFeedback(self.__container, self)
+		self.frames[ReviewFeedback] = frame
+		frame.grid(row=0, column=0, sticky='nsew')
+
 
 	def show_frame (self, cont):
 
@@ -217,11 +225,13 @@ class LoginPage (LoginFrame):
 					if username == k and password == v[0]:
 						if v[1] == 'student': #This would allow a seperate page to load if the user is a student
 							controller.geometry("1100x618+150+50")
+							controller.validLogin()
 							controller.show_frame(HomePage)
 							break
 							#StudentProfile.start()
 						if v[1] == 'lecturer': #This would allow a seperate page to load if the user is a lecturer
 							controller.geometry("1100x618+150+50")
+							controller.validLogin()
 							controller.show_frame(HomePage)
 							break
 							#LecturerProfile.start()
