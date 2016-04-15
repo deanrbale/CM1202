@@ -1,20 +1,20 @@
-1,example text,1,2,3,4
-2,example text,1,2,3,4
-3,example text,1,2,3,4
-4,example text,1,2,3,4
-5,example text,1,2,3,4
-6,example text,1,2,3,4
-7,example text,1,2,3,4
-8,example text,1,2,3,4
-9,example text,1,2,3,4
-10,example text,1,2,3,4
-11,example text,1,2,3,4
-12,example text,1,2,3,4
-13,example text,1,2,3,4
-14,example text,1,2,3,4
-15,example text,1,2,3,4
-16,example text,1,2,3,4
-17,example text,1,2,3,4
-18,example text,1,2,3,4
-19,example text,1,2,3,4
-20,example text,1,2,3,4
+1,What is the probability of getting a 2 of hearts from one deck of cards and getting a black card from another deck of cards?,1/104,27/52,1/52,15/82
+2,What is the probability if not getting a 2 of any suit when drawing a card from a deck of cards?,12/13,1/13,1/26,25/26
+3,If I flip a coin 3 times in a row what are the chances that it will land on heads each time?,1/8,1/2,1/4,3/10
+4,I roll a six sided dice on the table and if it lands on an even number I roll the same dice again and add the total. If it landed on and odd number I roll a 4 sided dice and add the total. What is the probability that my total will be even?,1/4,1/2,1/8,3/10
+5,What is the probability of getting a 2 of hearts from one deck of cards and getting a black card from another deck of cards?,1/104,27/52,1/52,15/82
+6,What is the probability if not getting a 2 of any suit when drawing a card from a deck of cards?,12/13,1/13,1/26,25/26
+7,If I flip a coin 3 times in a row what are the chances that it will land on heads each time?,1/8,1/2,1/4,3/10
+8,I roll a six sided dice on the table and if it lands on an even number I roll the same dice again and add the total. If it landed on and odd number I roll a 4 sided dice and add the total. What is the probability that my total will be even?,1/4,1/2,1/8,3/10
+9,What is the probability of getting a 2 of hearts from one deck of cards and getting a black card from another deck of cards?,1/104,27/52,1/52,15/82
+10,What is the probability if not getting a 2 of any suit when drawing a card from a deck of cards?,12/13,1/13,1/26,25/26
+11,If I flip a coin 3 times in a row what are the chances that it will land on heads each time?,1/8,1/2,1/4,3/10
+12,I roll a six sided dice on the table and if it lands on an even number I roll the same dice again and add the total. If it landed on and odd number I roll a 4 sided dice and add the total. What is the probability that my total will be even?,1/4,1/2,1/8,3/10
+13,What is the probability of getting a 2 of hearts from one deck of cards and getting a black card from another deck of cards?,1/104,27/52,1/52,15/82
+14,What is the probability if not getting a 2 of any suit when drawing a card from a deck of cards?,12/13,1/13,1/26,25/26
+15,If I flip a coin 3 times in a row what are the chances that it will land on heads each time?,1/8,1/2,1/4,3/10
+16,I roll a six sided dice on the table and if it lands on an even number I roll the same dice again and add the total. If it landed on and odd number I roll a 4 sided dice and add the total. What is the probability that my total will be even?,1/4,1/2,1/8,3/10
+17,What is the probability of getting a 2 of hearts from one deck of cards and getting a black card from another deck of cards?,1/104,27/52,1/52,15/82
+18,What is the probability if not getting a 2 of any suit when drawing a card from a deck of cards?,12/13,1/13,1/26,25/26
+19,If I flip a coin 3 times in a row what are the chances that it will land on heads each time?,1/8,1/2,1/4,3/10
+20,I roll a six sided dice on the table and if it lands on an even number I roll the same dice again and add the total. If it landed on and odd number I roll a 4 sided dice and add the total. What is the probability that my total will be even? w,1/4,1/2,1/8,3/10
