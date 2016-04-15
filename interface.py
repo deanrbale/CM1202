@@ -59,11 +59,11 @@ class CourseworkApp(tk.Tk):
 		self.frames[HomePage] = frame
 		frame.grid(row=0, column=0, sticky="nsew")
 
-		frame = LessonModule001(self.__container, self, "001")
+		frame = LessonModule001(self.__container, self, "001", user)
 		self.frames[LessonModule001] = frame
 		frame.grid(row=0, column=0, sticky='nsew')
 
-		frame = LessonModule002(self.__container, self, "002")
+		frame = LessonModule002(self.__container, self, "002", user)
 		self.frames[LessonModule002] = frame
 		frame.grid(row=0, column=0, sticky='nsew')
 
@@ -139,14 +139,14 @@ class HomePage (MenuFrame):
 
 class LessonModule001 (LectureFrame):
 
-	def __init__(self, parent, controller, mCode):
-		LectureFrame.__init__(self, parent, controller, mCode)
+	def __init__(self, parent, controller, mCode, user):
+		LectureFrame.__init__(self, parent, controller, mCode, user)
 		self.setCommands(controller, HomePage, TestModule001)
 
 class LessonModule002 (LectureFrame):
 
-	def __init__(self, parent, controller, mCode):
-		LectureFrame.__init__(self, parent, controller, mCode)
+	def __init__(self, parent, controller, mCode, user):
+		LectureFrame.__init__(self, parent, controller, mCode, user)
 		self.setCommands(controller, HomePage, TestModule002)
 
 class Editor001(EditorFrame):

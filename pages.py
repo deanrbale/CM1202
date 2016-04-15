@@ -537,8 +537,9 @@ class  TestFrame(tk.Frame):
 
 class LectureFrame(tk.Frame):
 
-	def __init__(self, parent , controller, moduleCode):
+	def __init__(self, parent , controller, moduleCode , user):
 		tk.Frame.__init__(self, parent)
+		self.__user = user
 		self.__lesson = "lesson_"+ moduleCode+ ".txt"
 		self.__title = 'title'
         #self.grid()
@@ -550,7 +551,7 @@ class LectureFrame(tk.Frame):
 	
 		self.cframe = tk.Frame(self)
 		self.cframe.grid(row=0, column=0, padx=(100,0), sticky='news')
-		self.canv = tk.Canvas(self.cframe, width=976, height=560)  #612                    #this wraps text widgets within
+		self.canv = tk.Canvas(self.cframe, width=976, height=540)  #612                    #this wraps text widgets within
 		self.canv.grid(row=0, column=0, sticky='news')                       #a canvas so that they can be
 		self.vscroll = tk.Scrollbar(self.cframe, orient=tk.VERTICAL, command=self.canv.yview) #scrolled through
 		self.vscroll.grid(row=0, column=1, sticky='ns')
@@ -643,12 +644,13 @@ class LectureFrame(tk.Frame):
 		
 
 		self.butBack = ttk.Button(self.ButtonFrame, text='Back')
-		#butEdit['command'] = self.Back
 		self.butBack.grid(row = 0,column = 0,  pady=(25,0), padx=(0,50))	
 		
 		self.butTest = ttk.Button(self.ButtonFrame, text='Test')
-		#butEdit['command'] = self.Test
 		self.butTest.grid(row = 0,column = 2, pady=(25,0) )
+
+		if self.__user[0] == 'lecturer':
+			self.butTest.grid_remove()
 
 	def setCommands(self, controller, menu, test):
 
