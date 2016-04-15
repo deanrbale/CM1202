@@ -5,6 +5,7 @@ import tkinter.messagebox as tm
 from tkinter import scrolledtext
 from module import *
 import csv
+import statistics as st
 
 EXTRA_LARGE_FONT = ("MS", 22, "bold")
 L_FONT = ("Verdana", 12)
@@ -76,7 +77,7 @@ class LoginFrame(tk.Frame):
 class MenuFrame(tk.Frame):
 	'Menu Frame'
 
-	def __init__(self, parent, controller):
+	def __init__(self, parent, controller, user):
 		'Initialise all widgets of the menu frame.'
 		tk.Frame.__init__(self, parent)
 
@@ -86,26 +87,27 @@ class MenuFrame(tk.Frame):
 		self.__column0xpad = 50
 		self.__row0ypad = 40
 
-		self.lblTitle = tk.Label(self, text="Welcome to the Home Page", justify='center', font=EXTRA_LARGE_FONT, wraplength=300)
+		self.lblTitle = tk.Label(self, text="Welcome " + user[1] + ' ' + user[2] +  " to the Home Page", justify='center', font=EXTRA_LARGE_FONT, wraplength=400)
 		self.lblTitle.grid( row=0, column=0,  columnspan=1,  rowspan=1, padx=(self.__column0xpad,50), pady=(self.__row0ypad,75), sticky="n")
 
-		self.lblMessage = tk.Label(self, text="Welcome to group 4s Coursework application, I will fill this text in with a more helpful message at a later date", justify='left', font=NORMAL_FONT, wraplength=400)
-		self.lblMessage.grid(row=1, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad,50), pady=(0,50), sticky="w")
-
-		self.lblInstructions = tk.Label(self, text="Select a module, then click to start the lesson or start the test", justify="left", font=NORMAL_FONT, wraplength=300)
-		self.lblInstructions.grid(row=2, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad,0), pady=(75,0), sticky="w")
+		if user[0] == 'lecturer':
+			messageText = 'From here you can view lessons that your students will see. You can also edit these too! Select the module on the right and use the buttons below. \n \n You can also view the feedback given by your students to help improve this application.'
+		else:
+			messageText = 'You may view lessons that have been provided by your lecturers. Once you have familiarised yourself with them proceed to take the test. \n \n To do this click on the module and then click on the Lesson or Test button.'
+		self.lblMessage = tk.Label(self, text=messageText, justify='left', font=NORMAL_FONT, wraplength=400)
+		self.lblMessage.grid(row=1, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad,50), pady=(0,0), sticky="w")
 
 		self.lblModule = tk.Label(self, text='Module:' , justify='left', font=NORMAL_FONT, wraplength=100)     
 		self.lblModule.grid(row=1, column=1, columnspan=1, rowspan=1, padx=(0,0), pady=(0,0), sticky="ne")
 		
-		self.listModule = tk.Listbox(self, height= 5, width=50, font=SMALL_FONT, selectmode=tk.SINGLE) 
+		self.listModule = tk.Listbox(self, height= 6, width=50, font=SMALL_FONT, selectmode=tk.SINGLE) 
 		self.scroll = ttk.Scrollbar(self, command= self.listModule.yview)                     
 		self.listModule.configure(yscrollcommand=self.scroll.set)  
 
 		for item in ["001 - Counting", "002 - Probability"]:                   
 			self.listModule.insert(tk.END, item)  
 
-		self.listModule.selection_set(0, tk.END)
+		self.listModule.selection_set(0,0)
 		self.listModule.focus_set()
 
 		self.listModule.grid(row=1, column=2, columnspan=1, rowspan=1, padx=(0,0), pady=(0,0), sticky="nw") 
@@ -115,30 +117,41 @@ class MenuFrame(tk.Frame):
 		self.butLesson = tk.Button(self, text="View Lesson", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
 		self.butLesson.bind("<Enter>", lambda event, x=self.butLesson: x.configure(bg="#80dfff"))
 		self.butLesson.bind("<Leave>", lambda event, x=self.butLesson: x.configure(bg="#d9d9d9"))
-		self.butLesson.grid(row=2, column=1, columnspan=1, rowspan=1, padx=(0,0), pady=(100,0), sticky="w")   
+		self.butLesson.grid(row=2, column=1, columnspan=1, rowspan=1, padx=(0,0), pady=(75,0), sticky="w")   
 
 		self.butTest = tk.Button(self, text="Test", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
 		self.butTest.bind("<Enter>", lambda event, x=self.butTest: x.configure(bg="#80dfff"))
 		self.butTest.bind("<Leave>", lambda event, x=self.butTest: x.configure(bg="#d9d9d9"))
-		self.butTest.grid(row=2, column=2, columnspan=1, rowspan=1, padx=(0,0), pady=(100,0), sticky="e")
+		self.butTest.grid(row=2, column=2, columnspan=1, rowspan=1, padx=(0,0), pady=(75,0), sticky="e")
 
 		self.butEdit = tk.Button(self, text="Edit Lesson", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
 		self.butEdit.bind("<Enter>", lambda event, x=self.butEdit: x.configure(bg="#80dfff"))
 		self.butEdit.bind("<Leave>", lambda event, x=self.butEdit: x.configure(bg="#d9d9d9"))
-		self.butEdit.grid(row=3, column=2, columnspan=1, rowspan=1, padx=(0,0), pady=(50,0), sticky="e")
+		self.butEdit.grid(row=2, column=2, columnspan=1, rowspan=1, padx=(0,0), pady=(75,0), sticky="e")
 
 		self.butFeedback = tk.Button(self, text="View Feedback", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
 		self.butFeedback.bind("<Enter>", lambda event, x=self.butFeedback: x.configure(bg="#80dfff"))
 		self.butFeedback.bind("<Leave>", lambda event, x=self.butFeedback: x.configure(bg="#d9d9d9"))
-		self.butFeedback.grid(row=3, column=1, columnspan=1, rowspan=1, padx=(0,0), pady=(50,0), sticky="e")
+		self.butFeedback.grid(row=2, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad + 130,0), pady=(75,0), sticky="w")
+
+		self.hideAppropriateButtons(user)
+
+	def hideAppropriateButtons(self, user):
+
+		if user[0] == 'lecturer':
+			self.butTest.grid_remove()
+		else:
+			self.butFeedback.grid_remove()
+			self.butEdit.grid_remove()
 
 class  TestFrame(tk.Frame):
 	'Test frame'
 
-	def __init__(self, parent, controller, mCode, mName, lCompleted):
+	def __init__(self, parent, controller, mCode, mName, user, lCompleted):
 		'Initialise all main widgets of the test frame.'
 		tk.Frame.__init__(self, parent)
 		self.__associatedModule = Module(mCode, mName, lCompleted)
+		self.__user = user
 
 		# self.__column0xpad = 150
 		# self.__row0ypad = 75
@@ -164,7 +177,7 @@ class  TestFrame(tk.Frame):
 		self.titleVariable.set(self.__associatedModule.getModuleName() + " Test Instructions")
 
 		self.labelVariable = tk.StringVar()
-		self.labelVariable.set("You have selected to do the test for " + self.__associatedModule.getModuleCode() + " you only have one attempt. Please read the instructions thoroughly before you start the test.")
+		self.labelVariable.set("You have selected to do the test for " + self.__associatedModule.getModuleCode() + " you only have one attempt. Please read the instructions thoroughly before you start the test. \n \n You must answer all 20 questions of this test. Each question is multiple choice and you must decide between 4 answers. Once you have selected your answer you must then click on the next button. You will be given instant feedback on the question. After all 20 questions have been answered, you will be able to review the whole test.")
 
 		self.lblTitle = tk.Label(self, textvariable=self.titleVariable, justify='center', font=EXTRA_LARGE_FONT, wraplength=400)
 		self.lblTitle.grid( row=0, column=0,  columnspan=1,  rowspan=1, padx=(self.__column0xpad,50), pady=(self.__row0ypad,75), sticky="n")
@@ -429,7 +442,7 @@ class  TestFrame(tk.Frame):
 			self.markQuestion(test, givenAnswer)
 			test.addSelectedAnswer(givenAnswer)
 			if test.getCurrentQuestionNumber() == test.getNumberOfQuestions() :
-				test.saveMarks('ForenameTest','SurnameTest')
+				test.saveMarks(self.__user[1],self.__user[2])
 				self.hideQuestionTemplate()
 				self.displayTestData(test)
 				self.showFeedbackTemplate()
@@ -549,6 +562,8 @@ class LectureFrame(tk.Frame):
 		file = open(self.__lesson,"r")
 		for line in file:
 			if line in ['\n', '\r\n']: #if line is blank move down a row
+				self.w = tk.Label(self.fileInputFrame, text='', font=('Times', 15, 'bold'))
+				self.w.grid(row=0, column=count)
 				Num += 1			
 			self.fileInputFrame = tk.Frame(self.aframe)
 			self.fileInputFrame.grid(row = Num)
@@ -559,7 +574,8 @@ class LectureFrame(tk.Frame):
 				if wordLen > 96:
 					Num += 1
 					self.fileInputFrame = tk.Frame(self.aframe) #is the length exceeds 110 move down a row
-					self.fileInputFrame.grid(row = Num)					
+					self.fileInputFrame.grid(row = Num)	
+					wordLen = 0				
 				if word[0] == ".":
 					if word[1] == "B":
 						self.w = tk.Label(self.fileInputFrame, text = word[2:], font = ("Times", 15, "bold"))
@@ -690,55 +706,148 @@ class SearchScoresFrame(tk.Frame):
     
 	def __init__(self, parent , controller):
                      
-		tk.Frame.__init__(self, parent)        
-		label = tk.Label(self, text="Test Results",font = L_FONT)
-                                             
-		mbutton1 = tk.Button(self,text= "Display all scores",command = lambda: controller.show_frame(testScores) ,font = L_FONT) 
-		mbutton1.pack(pady=5)
+		tk.Frame.__init__(self, parent)  
 
-        
-		userEnt = tk.Entry(self)
-		userEnt.pack(pady=5)
-		userEnt.get()
-        
-		def printer():
-                                 
-			userSearch = userEnt.get()            
-			print( str(userSearch) )            
-         
-			cr = csv.reader(open("test_marks.csv"))         
-          
-			for row in cr:    
-				if userSearch in row:                                                         
-					text = tk.Label(self, text = "   ".join(row),font = L_FONT )                   
-					text.pack()        
+		self.__column0xpad = 50
+		self.__row0ypad = 25
+
+		self.lblTitle = tk.Label(self, text='Test Results', justify='center', font=EXTRA_LARGE_FONT, wraplength=400)
+		self.lblTitle.grid( row=0, column=0,  columnspan=5,  rowspan=1, padx=(self.__column0xpad,0), pady=(self.__row0ypad,0), sticky="n")
+
+		self.lblMessage = tk.Label(self, text="Select what you wish to search in and enter a search query below", justify='center',font = L_FONT)
+		self.lblMessage.grid(row=1, column=0, columnspan=5,  rowspan=1, padx=(self.__column0xpad,0), pady=(20,0), sticky="nw")
+
+		self.userEnt = tk.Entry(self, width=30 , font=L_FONT)
+		self.userEnt.grid(row=2, column=0, columnspan=2,  rowspan=1, padx=(self.__column0xpad,0), pady=(20,0), sticky="n")
+
+		self.btSearch = ttk.Button(self, text='Search', command=lambda: self.fillListBoxWithSearch(False)) 
+		self.btSearch.grid(row=2, column=2, columnspan=1,  rowspan=1, padx=(0,0), pady=(20,0), sticky="nw")
+
+		self.mbutton1 = ttk.Button(self,text= "Display All", command=lambda: self.fillListBoxWithSearch(True)) 
+		self.mbutton1.grid(row=2, column=3, columnspan=1,  rowspan=1, padx=(0,0), pady=(20,0), sticky="nw")
+		
+		self.butMenu = tk.Button(self, text="Back to Menu", font=LARGE_BUTTON_FONT, height= 2, width=15, relief=tk.GROOVE, bg="#d9d9d9")
+		self.butMenu.bind("<Enter>", lambda event, x=self.butMenu: x.configure(bg="#80dfff"))
+		self.butMenu.bind("<Leave>", lambda event, x=self.butMenu: x.configure(bg="#d9d9d9"))
+		self.butMenu.grid(row=6, column=5, columnspan=1, rowspan=1, padx=(20,0), pady=(0,0), sticky="sw")
+
                  
-		tk.Button(self, text='Search', command=printer).pack()
+		self.addResultsTextBox()
+		self.addListbox()
+		self.addStatsLabels()
+                              
+	def addStatsLabels(self):
+		self.lblMean = tk.Label(self, text="Mean: ", justify='center',font = L_FONT)
+		self.lblMean.grid(row=1, column=5, columnspan=1,  rowspan=1, padx=(25,0), pady=(20,0), sticky="sw")
 
-		label2 = tk.Label(self, text="Surname-Forename-Module-Mark-Test date-Test time",font = L_FONT)
-		label.pack(pady= 10)
-		label2.pack(pady= 13)
+		self.lblMedian = tk.Label(self, text="Median: ", justify='center',font = L_FONT)
+		self.lblMedian.grid(row=2, column=5, columnspan=1,  rowspan=1, padx=(25,0), pady=(20,0), sticky="sw") 
+
+		self.lblstdDev = tk.Label(self, text="Standard deviation: ", justify='center',font = L_FONT)
+		self.lblstdDev.grid(row=3, column=5, columnspan=1,  rowspan=1, padx=(25,0), pady=(20,0), sticky="sw") 
+
+		self.lblHigh = tk.Label(self, text="Highest: ", justify='center',font = L_FONT)
+		self.lblHigh.grid(row=4, column=5, columnspan=1,  rowspan=1, padx=(25,0), pady=(30,0), sticky="sw")
+
+		self.lblLow = tk.Label(self, text="Lowest: ", justify='center',font = L_FONT)
+		self.lblLow.grid(row=5, column=5, columnspan=1,  rowspan=1, padx=(25,0), pady=(20,0), sticky="nw")                                                  
+                                  
+
+
+	def addListbox(self):
+
+		self.listSearchLabel = tk.Label(self, text='Select where you wish to search in' , justify='left', font=NORMAL_FONT, wraplength=400)
+		self.listSearchLabel.grid(row=3, column=0, columnspan=2, rowspan=1, padx=(self.__column0xpad,0), pady=(20,20), sticky="sw")
+
+		self.listSearch = tk.Listbox(self, height= 3, width=40, font=SMALL_FONT, selectmode=tk.SINGLE)
+		self.scrollSearch = ttk.Scrollbar(self)
+
+		self.listSearch.configure(yscrollcommand=self.scrollSearch.set)
+		self.scrollSearch.configure( command= self.listSearch.yview)                     
+
+		for search in ['Forename', 'Surname', 'Module']:
+			self.listSearch.insert(tk.END, search)
+
+		self.listSearch.selection_set(0,0)
+		self.listSearch.focus_set()
+
+
+		self.listSearch.grid(row=4, column=0, columnspan=1, rowspan=1, padx=(self.__column0xpad,0), pady=(10,0), sticky="ne") 
+		self.scrollSearch.grid(row=4, column=1, columnspan=1,  rowspan=1, padx=(0,0), pady=(10,0), sticky="nsw")
+
+	def addResultsTextBox(self):
+
+
+		self.txtbxResults = tk.Text (self, width=62, height=13 ,font=L_FONT, state=tk.DISABLED)
+		self.scrollResults = ttk.Scrollbar(self)
+
+		self.txtbxResults.configure(yscrollcommand=self.scrollResults.set)
+		self.scrollResults.configure( command= self.txtbxResults.yview)
+
+		self.txtbxResults.grid(row=5, column=0, columnspan=3,  rowspan=2, padx=(self.__column0xpad,0), pady=(20,0), sticky="ne")
+		self.scrollResults.grid(row=5, column=3, columnspan=1,  rowspan=2, padx=(0,0), pady=(20,0), sticky="nsw")
+
+	def fillListBoxWithSearch(self, displayAll):
+		self.txtbxResults.configure(state=tk.NORMAL)
+		self.txtbxResults.delete('0.0',tk.END)
+		self.clearStats()
+
+		selected = self.listSearch.curselection()
+		if len(selected) == 1 or displayAll:
+
+			if len(selected) == 1:
+				if selected[0] == 0:
+					section = 1
+				elif selected[0] == 1:
+					section = 0
+				elif selected[0] == 2:
+					section = 2
+
+			userSearch = self.userEnt.get()
+			markList = []
+			with open('test_marks.csv') as csvfile:
+				rdr = csv.reader(csvfile, delimiter=',')
+				for row in rdr:
+					try:
+						if displayAll or (userSearch.lower() in row[section].lower()):
+							formattedText = row[0] + ' - ' + row[1] + ' - ' + row[2] + ' - ' + row[3] + ' - ' + row[4] + ' - ' + row[5] + '\n'
+							markList.append(int(row[3]))
+							self.txtbxResults.insert(tk.END, str(formattedText))
+					except:
+						pass
+			if len(markList) != 0:
+				self.displayStats(markList)
+		self.txtbxResults.configure(state=tk.DISABLED)
+
+	def clearStats(self):
+
+		self.lblMean.configure(text='Mean:')
+		self.lblMedian.configure(text='Median:')
+		self.lblstdDev.configure(text='Standard deviation:')
+		self.lblHigh.configure(text='Highest:')
+		self.lblLow.configure(text='Lowest:')
+
+	def displayStats(self, markList):
+
+		meanMark = st.mean(markList)
+		medianMark = st.median(markList)
+		stdevMark = st.stdev(markList)
+		maxMark = max(markList)
+		minMark = min(markList)
+
+
+		self.lblMean.configure(text='Mean: {0:.2f}'.format(round(meanMark,2)))
+		self.lblMedian.configure(text='Median: {0:.2f}'.format(round(medianMark,2)))
+		self.lblstdDev.configure(text='Standard deviation: {0:.2f}'.format(round(stdevMark,2)))
+		self.lblHigh.configure(text='Highest: {0:d}'.format(maxMark))
+		self.lblLow.configure(text='Lowest: {0:d}'.format(minMark))
+
+
+	def setCommands(self, controller, menu):
+
+		self.butMenu.configure(command=lambda: controller.show_frame(menu))
+
                                                                                                                                                                                                     
-class TestScoresFrame(tk.Frame):   
-    
-	def __init__(self, parent, controller):
-		tk.Frame.__init__(self, parent)
-        
-		self.mbutton1 = tk.Button(self,text= "Seach Page",font = L_FONT)  
-		self.mbutton1.pack(pady=5)
-
-		label = tk.Label(self, text="All Test Results",font = L_FONT).pack()                
-		label2 = tk.Label(self, text="Surname-Forename-Module-Mark-Test date-Test time",font = L_FONT)        
-		label2.pack(pady= 13)
-
-		cro = csv.reader(open("test_marks.csv"))
-		for row in cro:
-			if "001" in row:
-				text1 = tk.Label(self, text ="   ".join(row), font= L_FONT).pack()
-	
-	def setCommands(self, controller, searchPage):
-		self.mbutton1.configure(command = lambda: controller.show_frame(searchPage))
-
 class FeedbackSubmitFrame(tk.Frame):
 
 	def __init__(self, parent, controller, moduleList):

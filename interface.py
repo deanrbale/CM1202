@@ -19,8 +19,6 @@ class CourseworkApp(tk.Tk):
 		self.__container.grid_rowconfigure(0, weight=1)
 		self.__container.grid_columnconfigure(0, weight=1)
 
-		self.createMenuBar(self.__container)
-
 		self.frames = {}
 
 		frame = LoginPage(self.__container, self)
@@ -32,19 +30,20 @@ class CourseworkApp(tk.Tk):
 
 		self.show_frame(LoginPage)
 
-	def createMenuBar(self, container):
+	def createMenuBar(self, container, usertype):
 		menubar = tk.Menu(container)
 		basicMenu = tk.Menu(menubar, tearoff=0)
 		basicMenu.add_command(label="Home", command=lambda: self.show_frame(HomePage))
 		basicMenu.add_separator()
 		basicMenu.add_command(label="Account settings", command=lambda: popupMessage("Not supported yet"))
-		basicMenu.add_command(label="Test scores", command=lambda:  self.show_frame(TestScores))
-		basicMenu.add_command(label="Logout", command=lambda: popupMessage("Not supported yet"))
+		if usertype == 'lecturer':
+			basicMenu.add_command(label="Test scores", command=lambda:  self.show_frame(SearchPage))
 		basicMenu.add_separator()
 		basicMenu.add_command(label="Exit", command=quit)
 		infoMenu = tk.Menu(menubar,tearoff=0)
 		infoMenu.add_command(label="Help", command=lambda: popupMessage("Not supported yet"))
-		infoMenu.add_command(label="Feedback", command=lambda: self.show_frame(UserFeedback)) #New Line Here
+		if usertype == 'student':
+			infoMenu.add_command(label="Feedback", command=lambda: self.show_frame(UserFeedback)) 
 		infoMenu.add_separator()
 		infoMenu.add_command(label="About", command=lambda: popupMessage("Not supported yet"))
 		menubar.add_cascade(label="Menu", menu=basicMenu)
@@ -52,21 +51,13 @@ class CourseworkApp(tk.Tk):
 
 		tk.Tk.config(self, menu=menubar)
 
-	def validLogin(self):
+	def validLogin(self, user):
 
-		for F in ( HomePage, TestScores, SearchPage):
+		self.createMenuBar(self.__container, user[0])
 
-			frame = F(self.__container, self)
-			self.frames[F] = frame
-			frame.grid(row=0, column=0, sticky="nsew")
-
-		frame = TestModule001(self.__container, self, "001", 'Counting')
-		self.frames[TestModule001] = frame
-		frame.grid(row=0, column=0, sticky='nsew')
-
-		frame = TestModule002(self.__container, self, "002", 'Probability')
-		self.frames[TestModule002] = frame
-		frame.grid(row=0, column=0, sticky='nsew')
+		frame = HomePage(self.__container, self, user)
+		self.frames[HomePage] = frame
+		frame.grid(row=0, column=0, sticky="nsew")
 
 		frame = LessonModule001(self.__container, self, "001")
 		self.frames[LessonModule001] = frame
@@ -74,6 +65,14 @@ class CourseworkApp(tk.Tk):
 
 		frame = LessonModule002(self.__container, self, "002")
 		self.frames[LessonModule002] = frame
+		frame.grid(row=0, column=0, sticky='nsew')
+
+		frame = SearchPage(self.__container, self)
+		self.frames[SearchPage] = frame
+		frame.grid(row=0, column=0, sticky="nsew")
+
+		frame = ReviewFeedback(self.__container, self)
+		self.frames[ReviewFeedback] = frame
 		frame.grid(row=0, column=0, sticky='nsew')
 
 		frame = Editor001(self.__container, self, "001")
@@ -84,26 +83,28 @@ class CourseworkApp(tk.Tk):
 		self.frames[Editor002] = frame
 		frame.grid(row=0, column=0, sticky='nsew')
 
-		frame = UserFeedback(self.__container, self, ['Module - 001', 'Module - 002'])
-		self.frames[UserFeedback] = frame
+		frame = TestModule001(self.__container, self, "001", 'Counting', user)
+		self.frames[TestModule001] = frame
 		frame.grid(row=0, column=0, sticky='nsew')
 
-		frame = ReviewFeedback(self.__container, self)
-		self.frames[ReviewFeedback] = frame
+		frame = TestModule002(self.__container, self, "002", 'Probability', user)
+		self.frames[TestModule002] = frame
+		frame.grid(row=0, column=0, sticky='nsew')
+
+		frame = UserFeedback(self.__container, self, ['Module - 001', 'Module - 002'])
+		self.frames[UserFeedback] = frame
 		frame.grid(row=0, column=0, sticky='nsew')
 
 
 	def show_frame (self, cont):
 
-		if cont != LoginPage:					
-			self.createMenuBar(tk.Frame(self))
 		frame = self.frames[cont]
 		frame.tkraise()
 
 class HomePage (MenuFrame):
 
-	def __init__(self, parent, controller):
-		MenuFrame.__init__(self, parent, controller)
+	def __init__(self, parent, controller, user):
+		MenuFrame.__init__(self, parent, controller, user)
 		self.butTest.configure(command=lambda: self.showSelectedModuleTest(controller))
 		self.butLesson.configure(command=lambda: self.showSelectedModuleLesson(controller))
 		self.butEdit.configure(command=lambda: self.showSelectedModuleEditor(controller))
@@ -162,26 +163,21 @@ class Editor002(EditorFrame):
 
 class TestModule001 (TestFrame):
 
-	def __init__(self, parent, controller, mCode, mName, lCompleted=False):
-		TestFrame.__init__(self, parent, controller, mCode, mName, lCompleted)
+	def __init__(self, parent, controller, mCode, mName, user, lCompleted=False):
+		TestFrame.__init__(self, parent, controller, mCode, mName, user,lCompleted)
 		self.setCommands(controller, HomePage)
 
 class TestModule002 (TestFrame):
 
-	def __init__(self, parent, controller, mCode, mName, lCompleted=False):
-		TestFrame.__init__(self, parent, controller, mCode, mName, lCompleted)
+	def __init__(self, parent, controller, mCode, mName, user, lCompleted=False):
+		TestFrame.__init__(self, parent, controller, mCode, mName, user,lCompleted)
 		self.setCommands(controller, HomePage)
-
-class TestScores(TestScoresFrame):
-
-	def __init__(self, parent, controller):
-		TestScoresFrame.__init__(self, parent, controller)
-		self.setCommands(controller, SearchPage)
 
 class SearchPage(SearchScoresFrame):
 
 	def __init__(self, parent, controller):
 		SearchScoresFrame.__init__(self,parent, controller)
+		self.setCommands(controller, HomePage)
 
 class UserFeedback (FeedbackSubmitFrame):
 
@@ -213,7 +209,7 @@ class LoginPage (LoginFrame):
 			rdr = csv.reader(csvfile)
 			headers = next(rdr, None)
 			for rows in rdr:
-				users[rows[3]] = (rows[4], rows[1])
+				users[rows[4]] = (rows[5], rows[1], rows[2], rows[3])
 			if username == "" :
  				checked1 = True
 			if password == "":
@@ -225,13 +221,15 @@ class LoginPage (LoginFrame):
 					if username == k and password == v[0]:
 						if v[1] == 'student': #This would allow a seperate page to load if the user is a student
 							controller.geometry("1100x618+150+50")
-							controller.validLogin()
+							user = [v[1], v[2], v[3]]
+							controller.validLogin(user)
 							controller.show_frame(HomePage)
 							break
 							#StudentProfile.start()
 						if v[1] == 'lecturer': #This would allow a seperate page to load if the user is a lecturer
 							controller.geometry("1100x618+150+50")
-							controller.validLogin()
+							user = [v[1], v[2], v[3]]
+							controller.validLogin(user)
 							controller.show_frame(HomePage)
 							break
 							#LecturerProfile.start()
