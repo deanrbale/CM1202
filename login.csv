@@ -1,3 +1,5 @@
 ID,type,name,username,password,modules
 1,lecturer,Matt,Morgan,lecturer1,password1,"[module1, module2]"
 2,student,John,Smith,student2,password2,"[module1, module2]"
+3,student,Alex,Wild,demostudent,password,"[module1, module2]"
+4,lecturer,Helen,Philips,demolecturer,password,"[module1, module2]"
